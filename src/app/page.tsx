@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic'
 import { useState, useEffect } from 'react'
 import { Clinic } from '@/types/clinic'
-import { getClinicAvailability } from '@/lib/booking-adapters'
+import { findNextAvailableSlot } from '@/lib/api'
 import CalendarView from '@/components/CalendarView'
 
 // Import map component dynamically to avoid SSR issues with Leaflet
@@ -41,20 +41,19 @@ export default function Home() {
       // Fetch next available slots for clinics with booking systems
       const clinicsWithSlots = await Promise.all(
         clinicsFromDb.map(async (clinic) => {
-          if (!clinic.isRealWalkIn && clinic.apiProvider && clinic.providerId) {
+          // Check if clinic has API integration configured
+          if (!clinic.isRealWalkIn && clinic.apiUrlTemplate) {
             try {
-              // Use the adapter system - works with any booking provider!
-              const nextSlot = await getClinicAvailability({
-                apiProvider: clinic.apiProvider,
-                providerId: clinic.providerId,
-                apiConfig: clinic.apiConfig,
-                daysToCheck: 14,
-              })
+              const nextSlot = await findNextAvailableSlot(
+                clinic.apiUrlTemplate,
+                clinic.apiDateFormat || 'YYYY-MM-DD',
+                14
+              )
               
               if (nextSlot) {
                 return {
                   ...clinic,
-                  nextAvailableSlot: nextSlot.startTime.toISOString(),
+                  nextAvailableSlot: nextSlot.slot.start_datetime,
                 }
               }
             } catch (error) {
@@ -160,19 +159,30 @@ export default function Home() {
                           {clinic.isRealWalkIn ? (
                             <div className="mt-2">
                               <span className="inline-block bg-secondary text-white text-xs px-2 py-0.5 rounded">
-                                ✓ Walk-In Available
+                                ✓ Walk-In Available Now
                               </span>
                             </div>
                           ) : clinic.nextAvailableSlot ? (
-                            <p className="text-xs text-gray-500 mt-2">
-                              <span className="font-medium">Next available:</span> {new Date(clinic.nextAvailableSlot).toLocaleString('en-US', { 
-                                month: 'short', 
-                                day: 'numeric', 
-                                hour: 'numeric', 
-                                minute: '2-digit' 
-                              })}
-                            </p>
-                          ) : null}
+                            <div className="mt-2">
+                              <p className="text-xs text-gray-700">
+                                <span className="font-semibold text-gray-800">Next slot:</span>
+                              </p>
+                              <p className="text-xs font-medium text-yellow-700 bg-yellow-50 px-2 py-1 rounded mt-1 inline-block">
+                                📅 {new Date(clinic.nextAvailableSlot).toLocaleString('en-US', { 
+                                  month: 'short', 
+                                  day: 'numeric', 
+                                  hour: 'numeric', 
+                                  minute: '2-digit' 
+                                })}
+                              </p>
+                            </div>
+                          ) : (
+                            <div className="mt-2">
+                              <span className="inline-block bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded">
+                                Call for availability
+                              </span>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -256,7 +266,7 @@ export default function Home() {
 
                 {/* Actions */}
                 <div className="space-y-2 pt-2">
-                  {!selectedClinic.isRealWalkIn && selectedClinic.providerId && (
+                  {!selectedClinic.isRealWalkIn && selectedClinic.apiUrlTemplate && (
                     <button
                       onClick={() => handleViewCalendar(selectedClinic)}
                       className="w-full bg-primary text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition font-semibold flex items-center justify-center gap-2"
@@ -278,7 +288,13 @@ export default function Home() {
                   )}
 
                   <a
-                    href={`https://www.google.com/maps/dir/?api=1&destination=${selectedClinic.latitude},${selectedClinic.longitude}`}
+                    href={
+                      selectedClinic.latitude && selectedClinic.longitude
+                        ? `https://www.google.com/maps/dir/?api=1&destination=${selectedClinic.latitude},${selectedClinic.longitude}`
+                        : `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+                            `${selectedClinic.address}, ${selectedClinic.city}, ${selectedClinic.province}`
+                          )}`
+                    }
                     target="_blank"
                     rel="noopener noreferrer"
                     className="block w-full bg-white border-2 border-gray-300 text-gray-700 px-4 py-3 rounded-lg hover:bg-gray-50 transition font-semibold text-center"
@@ -308,13 +324,13 @@ export default function Home() {
       </div>
 
       {/* Calendar Modal */}
-      {showCalendar && selectedClinic?.providerId && (
+      {showCalendar && selectedClinic?.apiUrlTemplate && (
         <CalendarView
-          providerId={selectedClinic.providerId}
-          location="m"
+          apiUrlTemplate={selectedClinic.apiUrlTemplate}
+          dateFormat={selectedClinic.apiDateFormat || 'YYYY-MM-DD'}
           onClose={() => setShowCalendar(false)}
           clinicName={selectedClinic.name}
-          bookingUrl={selectedClinic.bookingUrl || undefined}
+          bookingUrl={selectedClinic.website || undefined}
         />
       )}
     </div>

@@ -26,26 +26,22 @@ model Clinic {
   city        String
   province    String
   postalCode  String?  @map("postal_code")
-  latitude    Float
-  longitude   Float
+  latitude    Float?
+  longitude   Float?
   
   // Contact information
   phone       String?
-  fax         String?
   email       String?
   website     String?
-  bookingUrl  String?  @map("booking_url")
   
   // Booking & availability info
   isRealWalkIn        Boolean  @default(false) @map("is_real_walk_in")
   acceptsNewPatients  Boolean  @default(true) @map("accepts_new_patients")
-  appointmentTypes    Json?    @map("appointment_types") // ['in-person', 'phone', 'video']
+  appointmentTypes    String[] @map("appointment_types") // ['in-person', 'phone', 'video']
   
-  // API Integration
-  apiProvider   String?  @map("api_provider") // 'carefiniti', 'ocean', 'none'
-  providerId    String?  @map("provider_id") // Their ID in external system
-  apiEndpoint   String?  @map("api_endpoint")
-  apiConfig     Json?    @map("api_config") // Flexible config for provider-specific settings
+  // API Integration - Flexible URL template system
+  apiUrlTemplate   String?  @db.Text @map("api_url_template") // Full URL with placeholders like {date}, {from}, {to}
+  apiDateFormat    String?  @map("api_date_format") // e.g., 'YYYY-MM-DD' or 'ISO8601'
   
   // Metadata
   isActive        Boolean   @default(true) @map("is_active")
@@ -53,58 +49,5 @@ model Clinic {
   createdAt       DateTime  @default(now()) @map("created_at")
   updatedAt       DateTime  @updatedAt @map("updated_at")
   
-  // Relations
-  hours     ClinicHours[]
-  services  ClinicService[]
-  providers Provider[]
-  
   @@map("clinics")
-}
-
-// Operating hours for each clinic
-model ClinicHours {
-  id          String   @id @default(uuid())
-  clinicId    String   @map("clinic_id")
-  dayOfWeek   Int      @map("day_of_week") // 0=Sunday, 1=Monday, ..., 6=Saturday
-  openTime    String?  @map("open_time") // "09:00"
-  closeTime   String?  @map("close_time") // "17:00"
-  isClosed    Boolean  @default(false) @map("is_closed")
-  notes       String?  @db.Text
-  
-  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
-  
-  @@map("clinic_hours")
-  @@index([clinicId])
-}
-
-// Services offered by clinics
-model ClinicService {
-  id          String   @id @default(uuid())
-  clinicId    String   @map("clinic_id")
-  serviceType String   @map("service_type") // 'walk-in', 'lab', 'x-ray', 'prescriptions', etc.
-  isAvailable Boolean  @default(true) @map("is_available")
-  notes       String?  @db.Text
-  
-  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
-  
-  @@map("clinic_services")
-  @@index([clinicId])
-  @@index([serviceType])
-}
-
-// Healthcare providers/doctors at clinics (for future use)
-model Provider {
-  id                    String   @id @default(uuid())
-  clinicId              String   @map("clinic_id")
-  name                  String
-  credentials           String?  // MD, NP, RN, etc.
-  specialization        String?
-  carefinitiProviderNo  String?  @map("carefiniti_provider_no")
-  isAcceptingPatients   Boolean  @default(true) @map("is_accepting_patients")
-  scheduleNotes         String?  @db.Text @map("schedule_notes")
-  
-  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
-  
-  @@map("providers")
-  @@index([clinicId])
 }

@@ -1,20 +1,65 @@
 'use client'
 
 import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
-export default function NewClinic() {
+interface Clinic {
+  id: string
+  name: string
+  slug: string
+  description?: string
+  address: string
+  city: string
+  province: string
+  postalCode?: string
+  phone?: string
+  email?: string
+  website?: string
+  isRealWalkIn: boolean
+  acceptsNewPatients: boolean
+  appointmentTypes: string[]
+  apiUrlTemplate?: string
+  apiDateFormat?: string
+}
+
+export default function EditClinic() {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const params = useParams()
   const [loading, setLoading] = useState(false)
+  const [fetching, setFetching] = useState(true)
   const [error, setError] = useState('')
+  const [clinic, setClinic] = useState<Clinic | null>(null)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/admin/login')
     }
   }, [status, router])
+
+  useEffect(() => {
+    if (status === 'authenticated' && params.id) {
+      fetchClinic()
+    }
+  }, [status, params.id])
+
+  const fetchClinic = async () => {
+    try {
+      const response = await fetch(`/api/clinics/${params.id}`)
+      if (response.ok) {
+        const data = await response.json()
+        setClinic(data)
+      } else {
+        setError('Failed to load clinic')
+      }
+    } catch (err) {
+      setError('Failed to load clinic')
+      console.error(err)
+    } finally {
+      setFetching(false)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -43,8 +88,8 @@ export default function NewClinic() {
     }
 
     try {
-      const response = await fetch('/api/clinics', {
-        method: 'POST',
+      const response = await fetch(`/api/clinics/${params.id}`, {
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -52,19 +97,19 @@ export default function NewClinic() {
       })
 
       if (!response.ok) {
-        throw new Error('Failed to create clinic')
+        throw new Error('Failed to update clinic')
       }
 
       router.push('/admin/dashboard')
     } catch (err) {
-      setError('Failed to create clinic. Please try again.')
+      setError('Failed to update clinic. Please try again.')
       console.error(err)
     } finally {
       setLoading(false)
     }
   }
 
-  if (status === 'loading') {
+  if (status === 'loading' || fetching) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-lg">Loading...</div>
@@ -72,7 +117,7 @@ export default function NewClinic() {
     )
   }
 
-  if (!session) {
+  if (!session || !clinic) {
     return null
   }
 
@@ -95,7 +140,7 @@ export default function NewClinic() {
 
       <main className="max-w-4xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <h2 className="text-2xl font-bold mb-6">Add New Clinic</h2>
+          <h2 className="text-2xl font-bold mb-6">Edit Clinic</h2>
 
           {error && (
             <div className="mb-4 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded">
@@ -116,6 +161,7 @@ export default function NewClinic() {
                     type="text"
                     name="name"
                     required
+                    defaultValue={clinic.name}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     placeholder="e.g., Appletree Medical Group"
                   />
@@ -129,6 +175,7 @@ export default function NewClinic() {
                     type="text"
                     name="slug"
                     required
+                    defaultValue={clinic.slug}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     placeholder="e.g., appletree-carling"
                   />
@@ -141,6 +188,7 @@ export default function NewClinic() {
                   <textarea
                     name="description"
                     rows={3}
+                    defaultValue={clinic.description || ''}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Brief description of the clinic..."
                   />
@@ -160,6 +208,7 @@ export default function NewClinic() {
                     type="text"
                     name="address"
                     required
+                    defaultValue={clinic.address}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     placeholder="e.g., 2910 Carling Ave"
                   />
@@ -173,6 +222,7 @@ export default function NewClinic() {
                     type="text"
                     name="city"
                     required
+                    defaultValue={clinic.city}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     placeholder="e.g., Ottawa"
                   />
@@ -186,6 +236,7 @@ export default function NewClinic() {
                     type="text"
                     name="province"
                     required
+                    defaultValue={clinic.province}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     placeholder="e.g., ON"
                   />
@@ -198,6 +249,7 @@ export default function NewClinic() {
                   <input
                     type="text"
                     name="postalCode"
+                    defaultValue={clinic.postalCode || ''}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     placeholder="e.g., K2B 7J1"
                   />
@@ -216,6 +268,7 @@ export default function NewClinic() {
                   <input
                     type="tel"
                     name="phone"
+                    defaultValue={clinic.phone || ''}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     placeholder="e.g., 613-596-8000"
                   />
@@ -228,6 +281,7 @@ export default function NewClinic() {
                   <input
                     type="email"
                     name="email"
+                    defaultValue={clinic.email || ''}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     placeholder="e.g., info@clinic.com"
                   />
@@ -240,6 +294,7 @@ export default function NewClinic() {
                   <input
                     type="url"
                     name="website"
+                    defaultValue={clinic.website || ''}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     placeholder="https://www.clinic.com"
                   />
@@ -257,6 +312,7 @@ export default function NewClinic() {
                   </label>
                   <select
                     name="isRealWalkIn"
+                    defaultValue={clinic.isRealWalkIn ? 'true' : 'false'}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="false">Appointment Required</option>
@@ -270,7 +326,7 @@ export default function NewClinic() {
                   </label>
                   <select
                     name="acceptsNewPatients"
-                    defaultValue="true"
+                    defaultValue={clinic.acceptsNewPatients ? 'true' : 'false'}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="true">Yes</option>
@@ -285,6 +341,7 @@ export default function NewClinic() {
                   <input
                     type="text"
                     name="appointmentTypes"
+                    defaultValue={clinic.appointmentTypes?.join(', ') || ''}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     placeholder="e.g., in-person, video, phone"
                   />
@@ -310,6 +367,7 @@ export default function NewClinic() {
                   <input
                     type="text"
                     name="apiUrlTemplate"
+                    defaultValue={clinic.apiUrlTemplate || ''}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Full URL with everything except dates"
                   />
@@ -331,6 +389,7 @@ export default function NewClinic() {
                   </label>
                   <select
                     name="apiDateFormat"
+                    defaultValue={clinic.apiDateFormat || ''}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Select format...</option>
@@ -359,7 +418,7 @@ export default function NewClinic() {
                 disabled={loading}
                 className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-400"
               >
-                {loading ? 'Creating...' : 'Create Clinic'}
+                {loading ? 'Updating...' : 'Update Clinic'}
               </button>
             </div>
           </form>

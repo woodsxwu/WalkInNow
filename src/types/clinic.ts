@@ -9,8 +9,8 @@ export interface Clinic {
   city: string;
   province: string;
   postalCode?: string | null;
-  latitude: number;
-  longitude: number;
+  latitude?: number | null;
+  longitude?: number | null;
   
   // Contact
   phone?: string | null;
@@ -24,11 +24,9 @@ export interface Clinic {
   acceptsNewPatients: boolean;
   appointmentTypes?: any; // JSON field: ['in-person', 'phone', 'video']
   
-  // API Integration
-  apiProvider?: string | null; // 'carefiniti', 'ocean', 'none'
-  providerId?: string | null; // Their ID in external system
-  apiEndpoint?: string | null;
-  apiConfig?: any; // JSON field for provider-specific settings
+  // API Integration (legacy)
+  apiUrlTemplate?: string | null;
+  apiDateFormat?: string | null;
   
   // Metadata
   isActive: boolean;
@@ -41,8 +39,10 @@ export interface Clinic {
   services?: ClinicService[];
   providers?: Provider[];
   
-  // Runtime fields (not in DB)
+  // Runtime fields (not in DB, added by frontend)
   nextAvailableSlot?: string; // ISO date string - calculated at runtime
+  providerId?: string; // Added at runtime for calendar functionality
+  location?: string; // Added at runtime for API calls
 }
 
 export interface ClinicHours {

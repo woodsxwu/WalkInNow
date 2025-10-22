@@ -11,11 +11,6 @@ export async function GET(
       where: {
         id: params.id,
       },
-      include: {
-        hours: true,
-        services: true,
-        providers: true,
-      },
     })
 
     if (!clinic) {

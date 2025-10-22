@@ -8,10 +8,6 @@ export async function GET() {
       where: {
         isActive: true,
       },
-      include: {
-        hours: true,
-        services: true,
-      },
       orderBy: {
         name: 'asc',
       },
@@ -43,20 +39,14 @@ export async function POST(request: Request) {
         city: body.city,
         province: body.province,
         postalCode: body.postalCode,
-        latitude: body.latitude,
-        longitude: body.longitude,
         phone: body.phone,
-        fax: body.fax,
         email: body.email,
         website: body.website,
-        bookingUrl: body.bookingUrl,
         isRealWalkIn: body.isRealWalkIn ?? false,
         acceptsNewPatients: body.acceptsNewPatients ?? true,
         appointmentTypes: body.appointmentTypes,
-        apiProvider: body.apiProvider,
-        providerId: body.providerId,
-        apiEndpoint: body.apiEndpoint,
-        apiConfig: body.apiConfig,
+        apiUrlTemplate: body.apiUrlTemplate,
+        apiDateFormat: body.apiDateFormat,
       },
     })
 

@@ -20,45 +20,51 @@ export async function fetchClinics(): Promise<Clinic[]> {
 }
 
 /**
- * Format date for API call (YYYY-MM-DD)
+ * Format date according to the clinic's date format (from database)
  */
-function formatDateForAPI(date: Date): string {
+function formatDate(date: Date, format: string = 'YYYY-MM-DD'): string {
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
   const day = String(date.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
+  
+  // Support common date formats
+  return format
+    .replace('YYYY', String(year))
+    .replace('MM', month)
+    .replace('DD', day)
 }
 
 /**
- * Fetch available slots from Carefiniti API for a specific date
+ * Fetch available slots for a clinic using its API URL template
  */
-export async function fetchCarefinitiSlots(
-  providerId: string,
-  date: string,
-  location: string = 'm'
+export async function fetchClinicSlots(
+  apiUrlTemplate: string,
+  date: Date,
+  dateFormat: string = 'YYYY-MM-DD'
 ): Promise<CarefinitiResponse> {
   try {
-    const url = `https://carefiniti.cortico.ca/api/async/available-appointment-slots/${providerId}/${date}/walk-in-clinic/?location=${location}`
+    const dateStr = formatDate(date, dateFormat)
+    const url = apiUrlTemplate.replace('{date}', dateStr)
+    
     const response = await fetch(url)
     
     if (!response.ok) {
-      throw new Error(`Failed to fetch slots for provider ${providerId}`)
+      throw new Error(`Failed to fetch slots: ${response.status}`)
     }
     
     return await response.json()
   } catch (error) {
-    console.error(`Error fetching Carefiniti slots:`, error)
+    console.error(`Error fetching slots:`, error)
     throw error
   }
 }
 
 /**
- * Find the next available time slot starting from today
- * Searches up to 14 days ahead
+ * Find the next available time slot for a clinic
  */
 export async function findNextAvailableSlot(
-  providerId: string,
-  location: string = 'm',
+  apiUrlTemplate: string,
+  dateFormat: string = 'YYYY-MM-DD',
   daysToCheck: number = 14
 ): Promise<{ date: string; slot: CarefinitiSlot } | null> {
   const today = new Date()
@@ -67,10 +73,10 @@ export async function findNextAvailableSlot(
   for (let i = 0; i < daysToCheck; i++) {
     const checkDate = new Date(today)
     checkDate.setDate(today.getDate() + i)
-    const dateStr = formatDateForAPI(checkDate)
+    const dateStr = formatDate(checkDate, dateFormat)
     
     try {
-      const response = await fetchCarefinitiSlots(providerId, dateStr, location)
+      const response = await fetchClinicSlots(apiUrlTemplate, checkDate, dateFormat)
       const dayData = response[dateStr]
       
       if (!dayData) continue
@@ -140,10 +146,10 @@ export async function fetchTimeSlots(clinicIds: string[]): Promise<TimeSlotRespo
  * Returns slots separated by type (clinic, phone, video)
  */
 export async function fetchSlotsForDateRange(
-  providerId: string,
+  apiUrlTemplate: string,
   startDate: Date,
   days: number = 7,
-  location: string = 'm'
+  dateFormat: string = 'YYYY-MM-DD'
 ): Promise<Map<string, SlotsByType>> {
   const slotsMap = new Map<string, SlotsByType>()
   const now = new Date()
@@ -151,10 +157,10 @@ export async function fetchSlotsForDateRange(
   const promises = Array.from({ length: days }, async (_, i) => {
     const checkDate = new Date(startDate)
     checkDate.setDate(startDate.getDate() + i)
-    const dateStr = formatDateForAPI(checkDate)
+    const dateStr = formatDate(checkDate, dateFormat)
     
     try {
-      const response = await fetchCarefinitiSlots(providerId, dateStr, location)
+      const response = await fetchClinicSlots(apiUrlTemplate, checkDate, dateFormat)
       const dayData = response[dateStr]
       
       if (dayData) {

@@ -21,6 +21,7 @@ export default function AdminDashboard() {
   const router = useRouter()
   const [clinics, setClinics] = useState<Clinic[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -38,9 +39,22 @@ export default function AdminDashboard() {
     try {
       const response = await fetch('/api/clinics')
       const data = await response.json()
-      setClinics(data)
+      
+      // Check if response is an error object or an array
+      if (Array.isArray(data)) {
+        setClinics(data)
+        setError(null)
+      } else if (data.error) {
+        setError(data.error)
+        setClinics([])
+      } else {
+        setError('Unexpected response format')
+        setClinics([])
+      }
     } catch (error) {
       console.error('Error fetching clinics:', error)
+      setError('Failed to fetch clinics. Please try again.')
+      setClinics([])
     } finally {
       setLoading(false)
     }
@@ -109,6 +123,12 @@ export default function AdminDashboard() {
               + Add Clinic
             </button>
           </div>
+
+          {error && (
+            <div className="mb-4 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded">
+              {error}
+            </div>
+          )}
 
           {clinics.length === 0 ? (
             <div className="bg-white rounded-lg shadow p-8 text-center">
