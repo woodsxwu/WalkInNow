@@ -44,7 +44,11 @@ model Clinic {
   apiUrlTemplate   String?  @db.Text @map("api_url_template") // Full URL with placeholders like {date}, {from}, {to}
   apiDateFormat    String?  @map("api_date_format") // e.g., 'YYYY-MM-DD' or 'ISO8601'
   apiConfig        Json?    @map("api_config") // Provider-specific config (e.g., { orgId, typeId } for Medeo)
-  
+
+  // Cached availability (updated by background refresh)
+  nextAvailableSlot          DateTime? @map("next_available_slot")
+  availabilityLastFetchedAt  DateTime? @map("availability_last_fetched_at")
+
   // Metadata
   isActive        Boolean   @default(true) @map("is_active")
   lastVerifiedAt  DateTime? @map("last_verified_at")

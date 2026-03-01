@@ -48,45 +48,47 @@ export default function Home() {
   async function loadClinics() {
     setLoading(true)
     try {
-      // Fetch clinics from the database API
       const response = await fetch('/api/clinics')
       if (!response.ok) {
         throw new Error('Failed to fetch clinics')
       }
-      
+
       const clinicsFromDb: Clinic[] = await response.json()
 
-      // Render clinics immediately, then load availability in background
+      // Render immediately — clinics already have cached nextAvailableSlot from DB
       setClinics(clinicsFromDb)
       setLoading(false)
 
-      // Fetch availability progressively from server-side endpoint
-      const clinicsWithApi = clinicsFromDb.filter(
-        (c) => !c.isRealWalkIn && (c.apiUrlTemplate || c.apiProvider)
-      )
-      for (const clinic of clinicsWithApi) {
-        try {
-          const res = await fetch(`/api/availability?clinicId=${clinic.id}`)
-          if (res.ok) {
-            const data = await res.json()
-            if (data.nextAvailableSlot) {
-              setClinics((prev) =>
-                prev.map((c) =>
-                  c.id === clinic.id
-                    ? { ...c, nextAvailableSlot: data.nextAvailableSlot }
-                    : c
-                )
-              )
-            }
-          }
-        } catch (error) {
-          console.error(`Error fetching availability for ${clinic.name}:`, error)
-        }
+      // Determine which clinics have stale availability data
+      const STALENESS_MS = 2 * 60 * 60 * 1000 // 2 hours
+      const now = Date.now()
+      const staleClinicIds = clinicsFromDb
+        .filter((c) => {
+          if (c.isRealWalkIn) return false
+          if (!c.apiUrlTemplate && !c.apiProvider) return false
+          if (!c.availabilityLastFetchedAt) return true
+          return now - new Date(c.availabilityLastFetchedAt).getTime() > STALENESS_MS
+        })
+        .map((c) => c.id)
+
+      if (staleClinicIds.length > 0) {
+        // Fire background refresh, then re-fetch clinics with updated data
+        fetch('/api/availability/refresh', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ clinicIds: staleClinicIds }),
+        })
+          .then((res) => res.json())
+          .then(() => fetch('/api/clinics'))
+          .then((res) => res.json())
+          .then((updatedClinics: Clinic[]) => {
+            setClinics(updatedClinics)
+          })
+          .catch((err) => console.error('Background refresh failed:', err))
       }
-      return // already set loading=false above
     } catch (error) {
       console.error('Failed to load clinics:', error)
-      setClinics([]) // Set empty array on error
+      setClinics([])
     } finally {
       setLoading(false)
     }
@@ -181,19 +183,28 @@ export default function Home() {
                                 ✓ Walk-In Available Now
                               </span>
                             </div>
-                          ) : clinic.nextAvailableSlot ? (
+                          ) : clinic.nextAvailableSlot && !(
+                            clinic.availabilityLastFetchedAt &&
+                            Date.now() - new Date(clinic.availabilityLastFetchedAt).getTime() > 8 * 60 * 60 * 1000
+                          ) ? (
                             <div className="mt-2">
                               <p className="text-xs text-gray-700">
                                 <span className="font-semibold text-gray-800">Next slot:</span>
                               </p>
                               <p className="text-xs font-medium text-yellow-700 bg-yellow-50 px-2 py-1 rounded mt-1 inline-block">
-                                📅 {new Date(clinic.nextAvailableSlot).toLocaleString('en-US', { 
-                                  month: 'short', 
-                                  day: 'numeric', 
-                                  hour: 'numeric', 
-                                  minute: '2-digit' 
+                                {new Date(clinic.nextAvailableSlot).toLocaleString('en-US', {
+                                  month: 'short',
+                                  day: 'numeric',
+                                  hour: 'numeric',
+                                  minute: '2-digit'
                                 })}
                               </p>
+                            </div>
+                          ) : !clinic.isRealWalkIn && (clinic.apiUrlTemplate || clinic.apiProvider) ? (
+                            <div className="mt-2">
+                              <span className="inline-block bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded">
+                                Check availability
+                              </span>
                             </div>
                           ) : (
                             <div className="mt-2">

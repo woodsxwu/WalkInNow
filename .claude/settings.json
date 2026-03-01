@@ -83,7 +83,11 @@
       "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); k=list\\(d.keys\\(\\)\\)[0]; slots=d[k]; print\\(f''Provider 45: {len\\(slots.get\\(\"\"clinic_slots\"\",[]\\)\\)} clinic slots''\\)\")",
       "Bash(python3 -c \"import sys,json; print\\(json.dumps\\(json.load\\(sys.stdin\\), indent=2\\)\\)\")",
       "Bash(curl -s \"https://sullivanmedical.cortico.ca/api/booking/\")",
-      "Bash(python3 -c \":*)"
+      "Bash(python3 -c \":*)",
+      "Bash(ls /Users/zhixiaowu/WalkInNow/.env*)",
+      "Bash(npx prisma migrate dev --name add_availability_cache)",
+      "Bash(npx prisma db push)",
+      "Bash(npx tsc --noEmit)"
     ],
     "additionalDirectories": [
       "/private/tmp"

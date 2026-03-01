@@ -41,8 +41,11 @@ export interface Clinic {
   services?: ClinicService[];
   providers?: Provider[];
   
+  // Cached availability (from DB, updated by background refresh)
+  nextAvailableSlot?: string | null; // ISO date string - cached in DB
+  availabilityLastFetchedAt?: string | null; // ISO date string
+
   // Runtime fields (not in DB, added by frontend)
-  nextAvailableSlot?: string; // ISO date string - calculated at runtime
   providerId?: string; // Added at runtime for calendar functionality
   location?: string; // Added at runtime for API calls
 }
