@@ -13,6 +13,10 @@
 import { PrismaClient, Prisma } from '../src/generated/prisma'
 import { CLINICS } from './clinics-config'
 import { MEDEO_CLINICS } from './medeo-clinics-config'
+import { OCEAN_CLINICS } from './ocean-clinics-config'
+import { INPUTHEALTH_CLINICS } from './inputhealth-clinics-config'
+import { DOCTR_CLINICS } from './doctr-clinics-config'
+import { WALKIN_CLINICS } from './walkin-clinics-config'
 import { readFileSync, existsSync } from 'fs'
 import { join } from 'path'
 
@@ -251,13 +255,259 @@ async function main() {
     }
   }
 
-  const totalClinics = CLINICS.length + MEDEO_CLINICS.length
+  // === Seed OceanMD clinics ===
+  console.log(`\nSeeding ${OCEAN_CLINICS.length} OceanMD clinics...`)
+  for (const clinic of OCEAN_CLINICS) {
+    const slug = slugify(clinic.name)
+
+    const data = {
+      name: clinic.name,
+      slug,
+      address: clinic.address,
+      city: clinic.city,
+      province: 'BC',
+      postalCode: clinic.postalCode,
+      latitude: clinic.latitude,
+      longitude: clinic.longitude,
+      isRealWalkIn: false,
+      acceptsNewPatients: true,
+      appointmentTypes: ['in-person'],
+      apiProvider: 'ocean',
+      apiConfig: { uuid: clinic.uuid },
+      isActive: true,
+      phone: clinic.phone || null,
+      website: clinic.website || `https://ocean.cognisantmd.com/intake/patients.html#/${clinic.uuid}`,
+    }
+
+    try {
+      const existing = await prisma.clinic.findUnique({ where: { slug } })
+      if (existing) {
+        await prisma.clinic.update({ where: { slug }, data })
+        updated++
+        console.log(`  Updated: ${clinic.name} (Ocean uuid=${clinic.uuid.slice(0, 8)}...)`)
+      } else {
+        await prisma.clinic.create({ data })
+        created++
+        console.log(`  Created: ${clinic.name} (Ocean uuid=${clinic.uuid.slice(0, 8)}...)`)
+      }
+    } catch (error: any) {
+      if (error.code === 'P2002') {
+        const newSlug = `${slug}-ocean`
+        try {
+          const existing = await prisma.clinic.findUnique({ where: { slug: newSlug } })
+          if (existing) {
+            await prisma.clinic.update({ where: { slug: newSlug }, data: { ...data, slug: newSlug } })
+            updated++
+          } else {
+            await prisma.clinic.create({ data: { ...data, slug: newSlug } })
+            created++
+          }
+          console.log(`  Created: ${clinic.name} (slug: ${newSlug})`)
+        } catch (e) {
+          console.error(`  Failed: ${clinic.name} - ${e}`)
+          skipped++
+        }
+      } else {
+        console.error(`  Failed: ${clinic.name} - ${error.message}`)
+        skipped++
+      }
+    }
+  }
+
+  // === Seed InputHealth clinics ===
+  console.log(`\nSeeding ${INPUTHEALTH_CLINICS.length} InputHealth clinics...`)
+  for (const clinic of INPUTHEALTH_CLINICS) {
+    const slug = slugify(clinic.name)
+
+    const data = {
+      name: clinic.name,
+      slug,
+      address: clinic.address,
+      city: clinic.city,
+      province: 'BC',
+      postalCode: clinic.postalCode,
+      latitude: clinic.latitude,
+      longitude: clinic.longitude,
+      isRealWalkIn: false,
+      acceptsNewPatients: true,
+      appointmentTypes: ['in-person'],
+      apiProvider: 'inputhealth',
+      apiConfig: { clinicSlug: clinic.clinicSlug },
+      isActive: true,
+      phone: clinic.phone || null,
+      website: clinic.website || `https://${clinic.clinicSlug}.inputhealth.com/ebooking`,
+    }
+
+    try {
+      const existing = await prisma.clinic.findUnique({ where: { slug } })
+      if (existing) {
+        await prisma.clinic.update({ where: { slug }, data })
+        updated++
+        console.log(`  Updated: ${clinic.name} (InputHealth slug=${clinic.clinicSlug})`)
+      } else {
+        await prisma.clinic.create({ data })
+        created++
+        console.log(`  Created: ${clinic.name} (InputHealth slug=${clinic.clinicSlug})`)
+      }
+    } catch (error: any) {
+      if (error.code === 'P2002') {
+        const newSlug = `${slug}-inputhealth`
+        try {
+          const existing = await prisma.clinic.findUnique({ where: { slug: newSlug } })
+          if (existing) {
+            await prisma.clinic.update({ where: { slug: newSlug }, data: { ...data, slug: newSlug } })
+            updated++
+          } else {
+            await prisma.clinic.create({ data: { ...data, slug: newSlug } })
+            created++
+          }
+          console.log(`  Created: ${clinic.name} (slug: ${newSlug})`)
+        } catch (e) {
+          console.error(`  Failed: ${clinic.name} - ${e}`)
+          skipped++
+        }
+      } else {
+        console.error(`  Failed: ${clinic.name} - ${error.message}`)
+        skipped++
+      }
+    }
+  }
+
+  // === Seed Doctr clinics ===
+  console.log(`\nSeeding ${DOCTR_CLINICS.length} Doctr clinics...`)
+  for (const clinic of DOCTR_CLINICS) {
+    const slug = slugify(clinic.name)
+
+    const data = {
+      name: clinic.name,
+      slug,
+      address: clinic.address,
+      city: clinic.city,
+      province: 'BC',
+      postalCode: clinic.postalCode,
+      latitude: clinic.latitude,
+      longitude: clinic.longitude,
+      isRealWalkIn: false,
+      acceptsNewPatients: true,
+      appointmentTypes: ['in-person'],
+      apiProvider: 'doctr',
+      apiConfig: { clinicId: clinic.clinicId },
+      isActive: true,
+      phone: clinic.phone || null,
+      website: clinic.website || `https://app.doctr.ca/?ep=booking`,
+    }
+
+    try {
+      const existing = await prisma.clinic.findUnique({ where: { slug } })
+      if (existing) {
+        await prisma.clinic.update({ where: { slug }, data })
+        updated++
+        console.log(`  Updated: ${clinic.name} (Doctr id=${clinic.clinicId})`)
+      } else {
+        await prisma.clinic.create({ data })
+        created++
+        console.log(`  Created: ${clinic.name} (Doctr id=${clinic.clinicId})`)
+      }
+    } catch (error: any) {
+      if (error.code === 'P2002') {
+        const newSlug = `${slug}-doctr`
+        try {
+          const existing = await prisma.clinic.findUnique({ where: { slug: newSlug } })
+          if (existing) {
+            await prisma.clinic.update({ where: { slug: newSlug }, data: { ...data, slug: newSlug } })
+            updated++
+          } else {
+            await prisma.clinic.create({ data: { ...data, slug: newSlug } })
+            created++
+          }
+          console.log(`  Created: ${clinic.name} (slug: ${newSlug})`)
+        } catch (e) {
+          console.error(`  Failed: ${clinic.name} - ${e}`)
+          skipped++
+        }
+      } else {
+        console.error(`  Failed: ${clinic.name} - ${error.message}`)
+        skipped++
+      }
+    }
+  }
+
+  // === Seed True Walk-In Clinics (UPCCs + independents) ===
+  console.log(`\nSeeding ${WALKIN_CLINICS.length} true walk-in clinics...`)
+  for (const clinic of WALKIN_CLINICS) {
+    const slug = slugify(clinic.name)
+
+    const data = {
+      name: clinic.name,
+      slug,
+      address: clinic.address,
+      city: clinic.city,
+      province: 'BC',
+      postalCode: clinic.postalCode,
+      latitude: clinic.latitude,
+      longitude: clinic.longitude,
+      isRealWalkIn: true,
+      acceptsNewPatients: true,
+      appointmentTypes: ['in-person'],
+      apiProvider: null as string | null,
+      apiConfig: Prisma.DbNull,
+      isActive: true,
+      phone: clinic.phone || null,
+      website: clinic.website || null,
+      description: clinic.isUPCC
+        ? `Urgent & Primary Care Centre. Walk-in only — no appointments. ${clinic.hours || ''}`
+        : `True walk-in clinic — no online booking required. ${clinic.hours || ''}`,
+    }
+
+    try {
+      const existing = await prisma.clinic.findUnique({ where: { slug } })
+      if (existing) {
+        await prisma.clinic.update({ where: { slug }, data })
+        updated++
+        console.log(`  Updated: ${clinic.name} (${clinic.isUPCC ? 'UPCC' : 'Walk-in'})`)
+      } else {
+        await prisma.clinic.create({ data })
+        created++
+        console.log(`  Created: ${clinic.name} (${clinic.isUPCC ? 'UPCC' : 'Walk-in'})`)
+      }
+    } catch (error: any) {
+      if (error.code === 'P2002') {
+        const newSlug = `${slug}-walkin`
+        try {
+          const existing = await prisma.clinic.findUnique({ where: { slug: newSlug } })
+          if (existing) {
+            await prisma.clinic.update({ where: { slug: newSlug }, data: { ...data, slug: newSlug } })
+            updated++
+          } else {
+            await prisma.clinic.create({ data: { ...data, slug: newSlug } })
+            created++
+          }
+          console.log(`  Created: ${clinic.name} (slug: ${newSlug})`)
+        } catch (e) {
+          console.error(`  Failed: ${clinic.name} - ${e}`)
+          skipped++
+        }
+      } else {
+        console.error(`  Failed: ${clinic.name} - ${error.message}`)
+        skipped++
+      }
+    }
+  }
+
+  const totalClinics = CLINICS.length + MEDEO_CLINICS.length + OCEAN_CLINICS.length +
+    INPUTHEALTH_CLINICS.length + DOCTR_CLINICS.length + WALKIN_CLINICS.length
   console.log(`\n${'='.repeat(50)}`)
   console.log(`Seed complete!`)
   console.log(`  Created: ${created}`)
   console.log(`  Updated: ${updated}`)
   console.log(`  Skipped: ${skipped}`)
-  console.log(`  Total clinics in config: ${totalClinics} (${CLINICS.length} Cortico + ${MEDEO_CLINICS.length} Medeo)`)
+  console.log(`  Total clinics in config: ${totalClinics}`)
+  console.log(`    Cortico: ${CLINICS.length}`)
+  console.log(`    Medeo: ${MEDEO_CLINICS.length}`)
+  console.log(`    OceanMD: ${OCEAN_CLINICS.length}`)
+  console.log(`    InputHealth: ${INPUTHEALTH_CLINICS.length}`)
+  console.log(`    Doctr: ${DOCTR_CLINICS.length}`)
+  console.log(`    True Walk-In: ${WALKIN_CLINICS.length}`)
   console.log(`${'='.repeat(50)}\n`)
 
   // Show clinics without API integration

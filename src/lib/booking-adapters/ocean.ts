@@ -1,9 +1,31 @@
 import { BookingSystemAdapter, AvailableSlot } from './types'
 
-// Example adapter for Ocean Health booking system
+/**
+ * Adapter for OceanMD / CognisantMD online booking system.
+ *
+ * OceanMD is used by WELL Health clinics and others. Each clinic has a UUID
+ * that identifies its online booking page at:
+ *   https://ocean.cognisantmd.com/intake/patients.html#/{uuid}
+ *
+ * API endpoints:
+ *   /svc/v1/online-booking/{uuid}/availability
+ *   /svc/v1/online-booking/{uuid}/slots
+ *   /svc/scheduling/available?ref={uuid}
+ *
+ * NOTE: These endpoints require session-based authentication (the patient
+ * booking page is a SPA that initializes a session). Direct server-side
+ * calls return 403 "Authentication Failed".
+ *
+ * Current approach: We attempt the API call. If it fails (403), we fall back
+ * to returning null (no availability data). The clinic still appears in the
+ * app with its booking URL so users can book directly.
+ *
+ * TODO: Investigate headless browser approach or session token acquisition
+ * to fetch real-time availability data.
+ */
 export class OceanAdapter implements BookingSystemAdapter {
   providerName = 'ocean'
-  private baseUrl = 'https://api.ocean.health' // Example URL
+  private baseUrl = 'https://ocean.cognisantmd.com'
 
   async fetchAvailableSlots(config: {
     providerId: string
@@ -11,36 +33,47 @@ export class OceanAdapter implements BookingSystemAdapter {
     endDate: Date
     apiConfig?: any
   }): Promise<AvailableSlot[]> {
-    // Ocean might have a completely different API format
-    // Example: POST request with date range
-    try {
-      const response = await fetch(`${this.baseUrl}/appointments/available`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          provider_id: config.providerId,
-          start_date: config.startDate.toISOString(),
-          end_date: config.endDate.toISOString(),
-          location_id: config.apiConfig?.locationId,
-        }),
-      })
+    const uuid = config.apiConfig?.uuid || config.providerId
 
-      if (!response.ok) return []
+    try {
+      // Try the availability endpoint
+      const response = await fetch(
+        `${this.baseUrl}/svc/v1/online-booking/${uuid}/availability`,
+        {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+
+      if (!response.ok) {
+        // Expected: 403 without session auth
+        return []
+      }
 
       const data = await response.json()
-      
-      // Convert Ocean format to normalized format
-      // Assuming Ocean returns: { slots: [{ time: '...', duration: 30, type: 'video' }] }
-      return data.slots.map((slot: any) => ({
-        startTime: new Date(slot.time),
-        endTime: new Date(new Date(slot.time).getTime() + slot.duration * 60000),
-        type: this.mapSlotType(slot.type),
-        providerId: config.providerId,
-        bookingUrl: `${this.baseUrl}/book/${slot.id}`,
-        metadata: slot,
-      }))
+
+      // Map OceanMD slot format to normalized format
+      if (Array.isArray(data.slots)) {
+        return data.slots
+          .filter((slot: any) => new Date(slot.startTime || slot.time) > new Date())
+          .map((slot: any) => ({
+            startTime: new Date(slot.startTime || slot.time),
+            endTime: new Date(
+              new Date(slot.startTime || slot.time).getTime() +
+                (slot.duration || 15) * 60000
+            ),
+            type: this.mapSlotType(slot.type || slot.appointmentType),
+            providerId: config.providerId,
+            bookingUrl: `${this.baseUrl}/intake/patients.html#/${uuid}`,
+            metadata: slot,
+          }))
+      }
+
+      return []
     } catch (error) {
-      console.error('Error fetching Ocean slots:', error)
+      console.error('OceanMD: Error fetching slots:', error)
       return []
     }
   }
@@ -53,24 +86,26 @@ export class OceanAdapter implements BookingSystemAdapter {
     const startDate = new Date()
     const endDate = new Date()
     endDate.setDate(endDate.getDate() + (config.daysToCheck || 14))
-    
+
     const slots = await this.fetchAvailableSlots({
       providerId: config.providerId,
       startDate,
       endDate,
       apiConfig: config.apiConfig,
     })
-    
+
     return slots.length > 0 ? slots[0] : null
   }
 
   private mapSlotType(oceanType: string): AvailableSlot['type'] {
-    // Map Ocean's type names to our normalized types
     const mapping: Record<string, AvailableSlot['type']> = {
       'virtual': 'video',
+      'video': 'video',
       'in_clinic': 'in-person',
+      'in-person': 'in-person',
       'telephone': 'phone',
+      'phone': 'phone',
     }
-    return mapping[oceanType] || 'in-person'
+    return mapping[oceanType?.toLowerCase()] || 'in-person'
   }
 }

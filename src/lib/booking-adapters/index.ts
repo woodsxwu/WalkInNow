@@ -1,10 +1,14 @@
 import { BookingSystemRegistry, BookingSystemAdapter, AvailableSlot } from './types'
 import { CarefinitiAdapter } from './carefiniti'
 import { OceanAdapter } from './ocean'
+import { InputHealthAdapter } from './inputhealth'
+import { DoctrAdapter } from './doctr'
 
 // Register all available adapters
 BookingSystemRegistry.register('carefiniti', new CarefinitiAdapter())
 BookingSystemRegistry.register('ocean', new OceanAdapter())
+BookingSystemRegistry.register('inputhealth', new InputHealthAdapter())
+BookingSystemRegistry.register('doctr', new DoctrAdapter())
 
 // Helper function to get slots for any clinic
 export async function getClinicAvailability(clinic: {

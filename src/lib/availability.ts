@@ -132,6 +132,12 @@ export async function fetchNextAvailableSlot(clinic: {
   if (clinic.apiProvider === 'medeo' && clinic.apiConfig) {
     const config = clinic.apiConfig as { orgId: number; typeId: number }
     return fetchMedeoAvailability(config.orgId, config.typeId)
+  } else if (clinic.apiProvider === 'ocean' && clinic.apiConfig) {
+    return fetchOceanAvailability(clinic.apiConfig)
+  } else if (clinic.apiProvider === 'inputhealth' && clinic.apiConfig) {
+    return fetchInputHealthAvailability(clinic.apiConfig)
+  } else if (clinic.apiProvider === 'doctr' && clinic.apiConfig) {
+    return fetchDoctrAvailability(clinic.apiConfig)
   } else if (clinic.apiUrlTemplate) {
     const corticoConfig = clinic.apiConfig as CorticoApiConfig | null
     return fetchCorticoAvailability(
@@ -142,6 +148,101 @@ export async function fetchNextAvailableSlot(clinic: {
     )
   }
   return null
+}
+
+/**
+ * Fetch availability from OceanMD / CognisantMD.
+ * NOTE: Currently returns null as the API requires session auth.
+ * The clinic will still appear with its booking URL for direct user access.
+ */
+async function fetchOceanAvailability(
+  apiConfig: { uuid: string }
+): Promise<string | null> {
+  try {
+    const response = await fetch(
+      `https://ocean.cognisantmd.com/svc/v1/online-booking/${apiConfig.uuid}/availability`,
+      { headers: { 'Accept': 'application/json' } }
+    )
+    if (!response.ok) return null
+
+    const data = await response.json()
+    if (data.slots?.length > 0) {
+      const now = new Date()
+      const futureSlots = data.slots
+        .filter((s: any) => new Date(s.startTime || s.time) > now)
+        .sort((a: any, b: any) =>
+          new Date(a.startTime || a.time).getTime() -
+          new Date(b.startTime || b.time).getTime()
+        )
+      return futureSlots.length > 0
+        ? (futureSlots[0].startTime || futureSlots[0].time)
+        : null
+    }
+    return null
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Fetch availability from InputHealth (TELUS CHR).
+ * NOTE: Currently returns null as the eBooking API requires browser session.
+ */
+async function fetchInputHealthAvailability(
+  apiConfig: { clinicSlug: string }
+): Promise<string | null> {
+  try {
+    const now = new Date()
+    const to = new Date(now.getTime() + 14 * 86400000)
+    const fromStr = now.toISOString().split('T')[0]
+    const toStr = to.toISOString().split('T')[0]
+
+    const response = await fetch(
+      `https://${apiConfig.clinicSlug}.inputhealth.com/public/appointments/schedules?from=${fromStr}&to=${toStr}`,
+      {
+        headers: {
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+      }
+    )
+    if (!response.ok) return null
+
+    const contentType = response.headers.get('content-type') || ''
+    if (!contentType.includes('application/json')) return null
+
+    const data = await response.json()
+    if (Array.isArray(data) && data.length > 0) {
+      return data[0].starts_at || data[0].start_time || null
+    }
+    return null
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Fetch availability from Doctr.
+ * NOTE: Currently returns null as the API requires auth token.
+ */
+async function fetchDoctrAvailability(
+  apiConfig: { clinicId: string }
+): Promise<string | null> {
+  try {
+    const response = await fetch(
+      `https://api.doctr.ca/api/consultation-availabilities?clinicId=${apiConfig.clinicId}`,
+      { headers: { 'Accept': 'application/json' } }
+    )
+    if (!response.ok) return null
+
+    const data = await response.json()
+    if (Array.isArray(data) && data.length > 0) {
+      return data[0].appointmentDate || data[0].date || null
+    }
+    return null
+  } catch {
+    return null
+  }
 }
 
 /**
