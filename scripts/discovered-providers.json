@@ -1,0 +1,724 @@
+{
+  "discoveredAt": "2026-03-01T01:49:26.219Z",
+  "dateUsed": "2026-03-02",
+  "totalProviders": 117,
+  "providers": [
+    {
+      "subdomain": "acemedical",
+      "providerId": 9,
+      "locationSlugs": [],
+      "appointmentSlug": "walk-in"
+    },
+    {
+      "subdomain": "acemedical",
+      "providerId": 10,
+      "locationSlugs": [],
+      "appointmentSlug": "walk-in"
+    },
+    {
+      "subdomain": "acemedical",
+      "providerId": 15,
+      "locationSlugs": [],
+      "appointmentSlug": "walk-in"
+    },
+    {
+      "subdomain": "acemedical",
+      "providerId": 20,
+      "locationSlugs": [],
+      "appointmentSlug": "walk-in"
+    },
+    {
+      "subdomain": "albernimedicalclinic",
+      "providerId": 29,
+      "locationSlugs": [],
+      "appointmentSlug": "first-available-walk-in"
+    },
+    {
+      "subdomain": "albernimedicalclinic",
+      "providerId": 31,
+      "locationSlugs": [],
+      "appointmentSlug": "first-available-walk-in"
+    },
+    {
+      "subdomain": "albernimedicalclinic",
+      "providerId": 38,
+      "locationSlugs": [],
+      "appointmentSlug": "first-available-walk-in"
+    },
+    {
+      "subdomain": "albernimedicalclinic",
+      "providerId": 39,
+      "locationSlugs": [],
+      "appointmentSlug": "first-available-walk-in"
+    },
+    {
+      "subdomain": "albernimedicalclinic",
+      "providerId": 42,
+      "locationSlugs": [],
+      "appointmentSlug": "first-available-walk-in"
+    },
+    {
+      "subdomain": "carefiniti",
+      "providerId": 57,
+      "locationSlugs": [
+        "0"
+      ],
+      "appointmentSlug": "walk-in-clinic"
+    },
+    {
+      "subdomain": "carefiniti",
+      "providerId": 70,
+      "locationSlugs": [
+        "0",
+        "m"
+      ],
+      "appointmentSlug": "walk-in-clinic"
+    },
+    {
+      "subdomain": "carefiniti",
+      "providerId": 72,
+      "locationSlugs": [
+        "0"
+      ],
+      "appointmentSlug": "walk-in-clinic"
+    },
+    {
+      "subdomain": "carefiniti",
+      "providerId": 85,
+      "locationSlugs": [
+        "0",
+        "m"
+      ],
+      "appointmentSlug": "walk-in-clinic"
+    },
+    {
+      "subdomain": "carefiniti",
+      "providerId": 127,
+      "locationSlugs": [
+        "0",
+        "m"
+      ],
+      "appointmentSlug": "walk-in-clinic"
+    },
+    {
+      "subdomain": "collingwood",
+      "providerId": 100,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "collingwood",
+      "providerId": 103,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "collingwood",
+      "providerId": 104,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "collingwood",
+      "providerId": 105,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "collingwood",
+      "providerId": 112,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "collingwood",
+      "providerId": 116,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "collingwood",
+      "providerId": 123,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "collingwood",
+      "providerId": 125,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "collingwood",
+      "providerId": 127,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "collingwood",
+      "providerId": 134,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "collingwood",
+      "providerId": 100,
+      "locationSlugs": [],
+      "appointmentSlug": "rapid-access-telehealth"
+    },
+    {
+      "subdomain": "collingwood",
+      "providerId": 103,
+      "locationSlugs": [],
+      "appointmentSlug": "rapid-access-telehealth"
+    },
+    {
+      "subdomain": "collingwood",
+      "providerId": 104,
+      "locationSlugs": [],
+      "appointmentSlug": "rapid-access-telehealth"
+    },
+    {
+      "subdomain": "collingwood",
+      "providerId": 112,
+      "locationSlugs": [],
+      "appointmentSlug": "rapid-access-telehealth"
+    },
+    {
+      "subdomain": "collingwood",
+      "providerId": 116,
+      "locationSlugs": [],
+      "appointmentSlug": "rapid-access-telehealth"
+    },
+    {
+      "subdomain": "collingwood",
+      "providerId": 123,
+      "locationSlugs": [],
+      "appointmentSlug": "rapid-access-telehealth"
+    },
+    {
+      "subdomain": "collingwood",
+      "providerId": 125,
+      "locationSlugs": [],
+      "appointmentSlug": "rapid-access-telehealth"
+    },
+    {
+      "subdomain": "collingwood",
+      "providerId": 127,
+      "locationSlugs": [],
+      "appointmentSlug": "rapid-access-telehealth"
+    },
+    {
+      "subdomain": "collingwood",
+      "providerId": 134,
+      "locationSlugs": [],
+      "appointmentSlug": "rapid-access-telehealth"
+    },
+    {
+      "subdomain": "downtownvancouverclinic",
+      "providerId": 1,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "downtownvancouverclinic",
+      "providerId": 12,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "downtownvancouverclinic",
+      "providerId": 16,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "downtownvancouverclinic",
+      "providerId": 19,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "downtownvancouverclinic",
+      "providerId": 20,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "downtownvancouverclinic",
+      "providerId": 24,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "downtownvancouverclinic",
+      "providerId": 27,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "downtownvancouverclinic",
+      "providerId": 30,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "foothills",
+      "providerId": 41,
+      "locationSlugs": [],
+      "appointmentSlug": "first-available-walk-in"
+    },
+    {
+      "subdomain": "foothills",
+      "providerId": 47,
+      "locationSlugs": [],
+      "appointmentSlug": "first-available-walk-in"
+    },
+    {
+      "subdomain": "foothills",
+      "providerId": 50,
+      "locationSlugs": [],
+      "appointmentSlug": "first-available-walk-in"
+    },
+    {
+      "subdomain": "foothills",
+      "providerId": 70,
+      "locationSlugs": [],
+      "appointmentSlug": "first-available-walk-in"
+    },
+    {
+      "subdomain": "healthwise",
+      "providerId": 114,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "healthwise",
+      "providerId": 132,
+      "locationSlugs": [
+        "mount-seymour-medical-clinic"
+      ],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "healthwise",
+      "providerId": 153,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "kiancare",
+      "providerId": 1,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "kiancare",
+      "providerId": 10,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "kiancare",
+      "providerId": 1,
+      "locationSlugs": [],
+      "appointmentSlug": "meet--greet"
+    },
+    {
+      "subdomain": "kiancare",
+      "providerId": 10,
+      "locationSlugs": [],
+      "appointmentSlug": "meet--greet"
+    },
+    {
+      "subdomain": "kmc",
+      "providerId": 1,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "kmc",
+      "providerId": 2,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "kmc",
+      "providerId": 217,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "kmc",
+      "providerId": 238,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "legacies",
+      "providerId": 1,
+      "locationSlugs": [],
+      "appointmentSlug": "book-consultation"
+    },
+    {
+      "subdomain": "legacies",
+      "providerId": 1,
+      "locationSlugs": [],
+      "appointmentSlug": "flu-shot"
+    },
+    {
+      "subdomain": "legacies",
+      "providerId": 1,
+      "locationSlugs": [],
+      "appointmentSlug": "travel-clinic"
+    },
+    {
+      "subdomain": "legacies",
+      "providerId": 1,
+      "locationSlugs": [],
+      "appointmentSlug": "visitorout-of-country"
+    },
+    {
+      "subdomain": "legacies",
+      "providerId": 1,
+      "locationSlugs": [],
+      "appointmentSlug": "wsbcicbc"
+    },
+    {
+      "subdomain": "legacies",
+      "providerId": 1,
+      "locationSlugs": [],
+      "appointmentSlug": "private-forms"
+    },
+    {
+      "subdomain": "lonsdale",
+      "providerId": 38,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "lonsdale",
+      "providerId": 87,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "lonsdale",
+      "providerId": 112,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "lonsdale",
+      "providerId": 120,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "lonsdale",
+      "providerId": 130,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "lonsdale",
+      "providerId": 137,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "lonsdale",
+      "providerId": 159,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "lonsdale",
+      "providerId": 160,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "lonsdale",
+      "providerId": 164,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "lonsdale",
+      "providerId": 165,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "lonsdale",
+      "providerId": 173,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "lonsdale",
+      "providerId": 175,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "lynnvalley",
+      "providerId": 9,
+      "locationSlugs": [],
+      "appointmentSlug": "walk-inn"
+    },
+    {
+      "subdomain": "lynnvalley",
+      "providerId": 27,
+      "locationSlugs": [],
+      "appointmentSlug": "walk-inn"
+    },
+    {
+      "subdomain": "lynnvalley",
+      "providerId": 30,
+      "locationSlugs": [],
+      "appointmentSlug": "walk-inn"
+    },
+    {
+      "subdomain": "md4me",
+      "providerId": 12,
+      "locationSlugs": [],
+      "appointmentSlug": "walk-in"
+    },
+    {
+      "subdomain": "md4me",
+      "providerId": 41,
+      "locationSlugs": [],
+      "appointmentSlug": "walk-in"
+    },
+    {
+      "subdomain": "md4me",
+      "providerId": 42,
+      "locationSlugs": [],
+      "appointmentSlug": "walk-in"
+    },
+    {
+      "subdomain": "md4me",
+      "providerId": 43,
+      "locationSlugs": [],
+      "appointmentSlug": "walk-in"
+    },
+    {
+      "subdomain": "parkmedicalclinic",
+      "providerId": 1,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "parkmedicalclinic",
+      "providerId": 10,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "parkmedicalclinic",
+      "providerId": 16,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "parkmedicalclinic",
+      "providerId": 19,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "parkmedicalclinic",
+      "providerId": 20,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "parkmedicalclinic",
+      "providerId": 25,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "parkmedicalclinic",
+      "providerId": 30,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "parkmedicalclinic",
+      "providerId": 51,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "reachcentre",
+      "providerId": 49,
+      "locationSlugs": [],
+      "appointmentSlug": "nurse-appointment-rn-or-lpn"
+    },
+    {
+      "subdomain": "reachcentre",
+      "providerId": 79,
+      "locationSlugs": [],
+      "appointmentSlug": "nurse-appointment-rn-or-lpn"
+    },
+    {
+      "subdomain": "reachcentre",
+      "providerId": 168,
+      "locationSlugs": [],
+      "appointmentSlug": "nurse-appointment-rn-or-lpn"
+    },
+    {
+      "subdomain": "reachcentre",
+      "providerId": 239,
+      "locationSlugs": [],
+      "appointmentSlug": "nurse-appointment-rn-or-lpn"
+    },
+    {
+      "subdomain": "reachcentre",
+      "providerId": 240,
+      "locationSlugs": [],
+      "appointmentSlug": "nurse-appointment-rn-or-lpn"
+    },
+    {
+      "subdomain": "reachcentre",
+      "providerId": 11,
+      "locationSlugs": [],
+      "appointmentSlug": "primary-care-provider-appointment-gp-or-np"
+    },
+    {
+      "subdomain": "reachcentre",
+      "providerId": 28,
+      "locationSlugs": [],
+      "appointmentSlug": "primary-care-provider-appointment-gp-or-np"
+    },
+    {
+      "subdomain": "reachcentre",
+      "providerId": 88,
+      "locationSlugs": [],
+      "appointmentSlug": "primary-care-provider-appointment-gp-or-np"
+    },
+    {
+      "subdomain": "reachcentre",
+      "providerId": 114,
+      "locationSlugs": [],
+      "appointmentSlug": "primary-care-provider-appointment-gp-or-np"
+    },
+    {
+      "subdomain": "reachcentre",
+      "providerId": 210,
+      "locationSlugs": [],
+      "appointmentSlug": "primary-care-provider-appointment-gp-or-np"
+    },
+    {
+      "subdomain": "reachcentre",
+      "providerId": 222,
+      "locationSlugs": [],
+      "appointmentSlug": "primary-care-provider-appointment-gp-or-np"
+    },
+    {
+      "subdomain": "reachcentre",
+      "providerId": 232,
+      "locationSlugs": [],
+      "appointmentSlug": "primary-care-provider-appointment-gp-or-np"
+    },
+    {
+      "subdomain": "reachcentre",
+      "providerId": 238,
+      "locationSlugs": [],
+      "appointmentSlug": "primary-care-provider-appointment-gp-or-np"
+    },
+    {
+      "subdomain": "reachcentre",
+      "providerId": 249,
+      "locationSlugs": [],
+      "appointmentSlug": "primary-care-provider-appointment-gp-or-np"
+    },
+    {
+      "subdomain": "reachcentre",
+      "providerId": 250,
+      "locationSlugs": [],
+      "appointmentSlug": "primary-care-provider-appointment-gp-or-np"
+    },
+    {
+      "subdomain": "southsurrey",
+      "providerId": 39,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "southsurrey",
+      "providerId": 47,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "southsurrey",
+      "providerId": 39,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor-phone"
+    },
+    {
+      "subdomain": "southsurrey",
+      "providerId": 47,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor-phone"
+    },
+    {
+      "subdomain": "stationsquare",
+      "providerId": 5,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "sullivanmedical",
+      "providerId": 24,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "sullivanmedical",
+      "providerId": 25,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "sullivanmedical",
+      "providerId": 45,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "welcomemedical",
+      "providerId": 82,
+      "locationSlugs": [],
+      "appointmentSlug": "walk-in---in-person"
+    },
+    {
+      "subdomain": "welcomemedical",
+      "providerId": 205,
+      "locationSlugs": [],
+      "appointmentSlug": "walk-in---in-person"
+    },
+    {
+      "subdomain": "welcomemedical",
+      "providerId": 43,
+      "locationSlugs": [],
+      "appointmentSlug": "walkin"
+    },
+    {
+      "subdomain": "welcomemedical",
+      "providerId": 82,
+      "locationSlugs": [],
+      "appointmentSlug": "walkin"
+    },
+    {
+      "subdomain": "welcomemedical",
+      "providerId": 205,
+      "locationSlugs": [],
+      "appointmentSlug": "walkin"
+    }
+  ]
+}

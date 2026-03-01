@@ -24,9 +24,11 @@ export interface Clinic {
   acceptsNewPatients: boolean;
   appointmentTypes?: any; // JSON field: ['in-person', 'phone', 'video']
   
-  // API Integration (legacy)
+  // API Integration
+  apiProvider?: string | null; // 'cortico' or 'medeo'
   apiUrlTemplate?: string | null;
   apiDateFormat?: string | null;
+  apiConfig?: any; // Provider-specific config (e.g., { orgId, typeId } for Medeo)
   
   // Metadata
   isActive: boolean;

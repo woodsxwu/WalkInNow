@@ -40,8 +40,10 @@ model Clinic {
   appointmentTypes    String[] @map("appointment_types") // ['in-person', 'phone', 'video']
   
   // API Integration - Flexible URL template system
+  apiProvider      String?  @map("api_provider") // 'cortico' or 'medeo'
   apiUrlTemplate   String?  @db.Text @map("api_url_template") // Full URL with placeholders like {date}, {from}, {to}
   apiDateFormat    String?  @map("api_date_format") // e.g., 'YYYY-MM-DD' or 'ISO8601'
+  apiConfig        Json?    @map("api_config") // Provider-specific config (e.g., { orgId, typeId } for Medeo)
   
   // Metadata
   isActive        Boolean   @default(true) @map("is_active")

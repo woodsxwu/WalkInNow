@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic'
 import { useState, useEffect } from 'react'
 import { Clinic } from '@/types/clinic'
-import { findNextAvailableSlot } from '@/lib/api'
+// availability is now fetched server-side via /api/availability
 import CalendarView from '@/components/CalendarView'
 
 // Import map component dynamically to avoid SSR issues with Leaflet
@@ -15,6 +15,24 @@ const MapComponent = dynamic(() => import('@/components/MapComponent'), {
     </div>
   ),
 })
+
+function getCorticoUrlTemplates(clinic: Clinic): string[] {
+  const config = clinic.apiConfig as {
+    subdomain: string
+    providers: { id: number; appointmentSlug: string }[]
+    locationSlug: string | null
+  } | null
+
+  if (config?.providers?.length) {
+    return config.providers.map((p) => {
+      const base = `https://${config.subdomain}.cortico.ca/api/async/available-appointment-slots/${p.id}/{date}/${p.appointmentSlug}/`
+      return config.locationSlug ? `${base}?location=${config.locationSlug}` : base
+    })
+  }
+
+  // Fallback to single template
+  return clinic.apiUrlTemplate ? [clinic.apiUrlTemplate] : []
+}
 
 export default function Home() {
   const [clinics, setClinics] = useState<Clinic[]>([])
@@ -38,33 +56,34 @@ export default function Home() {
       
       const clinicsFromDb: Clinic[] = await response.json()
 
-      // Fetch next available slots for clinics with booking systems
-      const clinicsWithSlots = await Promise.all(
-        clinicsFromDb.map(async (clinic) => {
-          // Check if clinic has API integration configured
-          if (!clinic.isRealWalkIn && clinic.apiUrlTemplate) {
-            try {
-              const nextSlot = await findNextAvailableSlot(
-                clinic.apiUrlTemplate,
-                clinic.apiDateFormat || 'YYYY-MM-DD',
-                14
+      // Render clinics immediately, then load availability in background
+      setClinics(clinicsFromDb)
+      setLoading(false)
+
+      // Fetch availability progressively from server-side endpoint
+      const clinicsWithApi = clinicsFromDb.filter(
+        (c) => !c.isRealWalkIn && (c.apiUrlTemplate || c.apiProvider)
+      )
+      for (const clinic of clinicsWithApi) {
+        try {
+          const res = await fetch(`/api/availability?clinicId=${clinic.id}`)
+          if (res.ok) {
+            const data = await res.json()
+            if (data.nextAvailableSlot) {
+              setClinics((prev) =>
+                prev.map((c) =>
+                  c.id === clinic.id
+                    ? { ...c, nextAvailableSlot: data.nextAvailableSlot }
+                    : c
+                )
               )
-              
-              if (nextSlot) {
-                return {
-                  ...clinic,
-                  nextAvailableSlot: nextSlot.slot.start_datetime,
-                }
-              }
-            } catch (error) {
-              console.error(`Error fetching availability for ${clinic.name}:`, error)
             }
           }
-          return clinic
-        })
-      )
-
-      setClinics(clinicsWithSlots)
+        } catch (error) {
+          console.error(`Error fetching availability for ${clinic.name}:`, error)
+        }
+      }
+      return // already set loading=false above
     } catch (error) {
       console.error('Failed to load clinics:', error)
       setClinics([]) // Set empty array on error
@@ -266,7 +285,7 @@ export default function Home() {
 
                 {/* Actions */}
                 <div className="space-y-2 pt-2">
-                  {!selectedClinic.isRealWalkIn && selectedClinic.apiUrlTemplate && (
+                  {!selectedClinic.isRealWalkIn && (selectedClinic.apiUrlTemplate || selectedClinic.apiConfig) && (
                     <button
                       onClick={() => handleViewCalendar(selectedClinic)}
                       className="w-full bg-primary text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition font-semibold flex items-center justify-center gap-2"
@@ -324,9 +343,13 @@ export default function Home() {
       </div>
 
       {/* Calendar Modal */}
-      {showCalendar && selectedClinic?.apiUrlTemplate && (
+      {showCalendar && selectedClinic && (selectedClinic.apiUrlTemplate || selectedClinic.apiConfig) && (
         <CalendarView
-          apiUrlTemplate={selectedClinic.apiUrlTemplate}
+          apiUrlTemplates={
+            selectedClinic.apiProvider === 'cortico'
+              ? getCorticoUrlTemplates(selectedClinic)
+              : selectedClinic.apiUrlTemplate ? [selectedClinic.apiUrlTemplate] : []
+          }
           dateFormat={selectedClinic.apiDateFormat || 'YYYY-MM-DD'}
           onClose={() => setShowCalendar(false)}
           clinicName={selectedClinic.name}

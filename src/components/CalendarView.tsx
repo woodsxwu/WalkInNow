@@ -5,7 +5,7 @@ import { CarefinitiSlot, SlotsByType } from '@/types/clinic'
 import { fetchSlotsForDateRange } from '@/lib/api'
 
 interface CalendarViewProps {
-  apiUrlTemplate: string
+  apiUrlTemplates: string[]
   dateFormat?: string
   onClose: () => void
   clinicName: string
@@ -14,10 +14,10 @@ interface CalendarViewProps {
 
 type AppointmentType = 'clinic' | 'phone' | 'video'
 
-export default function CalendarView({ 
-  apiUrlTemplate,
+export default function CalendarView({
+  apiUrlTemplates,
   dateFormat = 'YYYY-MM-DD',
-  onClose, 
+  onClose,
   clinicName,
   bookingUrl
 }: CalendarViewProps) {
@@ -29,12 +29,12 @@ export default function CalendarView({
 
   useEffect(() => {
     loadSlots()
-  }, [apiUrlTemplate, startDate])
+  }, [apiUrlTemplates, startDate])
 
   async function loadSlots() {
     setLoading(true)
     try {
-      const slots = await fetchSlotsForDateRange(apiUrlTemplate, startDate, 7, dateFormat)
+      const slots = await fetchSlotsForDateRange(apiUrlTemplates, startDate, 7, dateFormat)
       setSlotsMap(slots)
     } catch (error) {
       console.error('Error loading slots:', error)

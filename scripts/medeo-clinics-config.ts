@@ -1,0 +1,286 @@
+// Metro Vancouver clinics using Medeo for online booking
+// Discovered via Medeo API scan (api-ca.medeohealth.com)
+
+export interface MedeoClinicConfig {
+  name: string
+  orgId: number
+  typeId: number // in-person appointment type ID
+  slug: string // Medeo slug for booking URL
+  city: string
+  address: string
+  postalCode: string
+  latitude: number
+  longitude: number
+  phone?: string
+}
+
+export const MEDEO_CLINICS: MedeoClinicConfig[] = [
+  // === VANCOUVER ===
+  {
+    name: 'Loyal Medical Clinic',
+    orgId: 1558,
+    typeId: 53324,
+    slug: 'loyal-medical-clinic',
+    city: 'Vancouver',
+    address: '1055 West Georgia Street, Unit 112, Vancouver, BC',
+    postalCode: 'V6E 3P1',
+    latitude: 49.2847,
+    longitude: -123.1249,
+    phone: '(604) 428-8313',
+  },
+  {
+    name: 'Choice Medical Clinic',
+    orgId: 5709,
+    typeId: 53055,
+    slug: 'choice-medical-clinic',
+    city: 'Vancouver',
+    address: '817 W Hastings, Vancouver, BC',
+    postalCode: 'V6C 3N9',
+    latitude: 49.2855,
+    longitude: -123.1155,
+    phone: '(604) 969-8900',
+  },
+  {
+    name: 'Georgia Medical Clinic',
+    orgId: 4753,
+    typeId: 37916,
+    slug: 'georgia-medical-clinic',
+    city: 'Vancouver',
+    address: '683 Denman St, Vancouver, BC',
+    postalCode: 'V6G 2L3',
+    latitude: 49.2905,
+    longitude: -123.1375,
+    phone: '(604) 564-6644',
+  },
+  {
+    name: 'Denman Medical Centre',
+    orgId: 6555,
+    typeId: 53892,
+    slug: 'denman-medical-centre',
+    city: 'Vancouver',
+    address: '1175 Denman Street, Vancouver, BC',
+    postalCode: 'V6G 2N1',
+    latitude: 49.2862,
+    longitude: -123.1370,
+    phone: '(604) 428-7611',
+  },
+
+  // === NORTH VANCOUVER ===
+  {
+    name: 'North Shore Medical Group',
+    orgId: 2064,
+    typeId: 25769,
+    slug: 'north-shore-medical-group',
+    city: 'North Vancouver',
+    address: 'Suite 300 - 1133 Lonsdale, North Vancouver, BC',
+    postalCode: 'V7M 2H4',
+    latitude: 49.3192,
+    longitude: -123.0754,
+    phone: '(604) 973-1381',
+  },
+
+  // === RICHMOND ===
+  {
+    name: 'Elicare: Lansdowne Medical Clinic',
+    orgId: 4526,
+    typeId: 30834,
+    slug: 'elicare-lansdowne-medical-clinic',
+    city: 'Richmond',
+    address: '140 - 5611 Cooney Rd, Richmond, BC',
+    postalCode: 'V6X 3J6',
+    latitude: 49.1687,
+    longitude: -123.1369,
+    phone: '(604) 242-1862',
+  },
+
+  // === SURREY ===
+  {
+    name: 'Hygiea Medical Clinic',
+    orgId: 2830,
+    typeId: 18497,
+    slug: 'hygiea-medical-clinic',
+    city: 'Surrey',
+    address: '#300-15336 31 Ave, Surrey, BC',
+    postalCode: 'V3Z 0G3',
+    latitude: 49.0525,
+    longitude: -122.7966,
+    phone: '(604) 541-8794',
+  },
+  {
+    name: 'Family Practice Clinic',
+    orgId: 6656,
+    typeId: 53038,
+    slug: 'family-practice-clinic',
+    city: 'Surrey',
+    address: '#102 B, 6844 King George Blvd, Surrey, BC',
+    postalCode: 'V3W 4Z9',
+    latitude: 49.1295,
+    longitude: -122.8467,
+    phone: '(604) 592-9898',
+  },
+  {
+    name: 'Pier Medical Clinic',
+    orgId: 6786,
+    typeId: 36616,
+    slug: 'pier-medical-clinic',
+    city: 'Surrey',
+    address: 'Unit 300, 15300 Croydon Drive, Surrey, BC',
+    postalCode: 'V3Z 0Z5',
+    latitude: 49.0530,
+    longitude: -122.7953,
+    phone: '(778) 902-2700',
+  },
+  {
+    name: 'WELL Health Medical Centres - Nordel Crossing',
+    orgId: 6768,
+    typeId: 37730,
+    slug: 'the-health-clinic-by-shoppers-9612',
+    city: 'Surrey',
+    address: '115-12080 Nordel Way, Surrey, BC',
+    postalCode: 'V3W 1P6',
+    latitude: 49.1238,
+    longitude: -122.8896,
+    phone: '(604) 591-6300',
+  },
+  {
+    name: 'WELL Health Medical Centres - Central City',
+    orgId: 6777,
+    typeId: 37732,
+    slug: 'the-health-clinic-by-shoppers-9610',
+    city: 'Surrey',
+    address: '3110, 10153 King George Blvd, Surrey, BC',
+    postalCode: 'V3T 5E5',
+    latitude: 49.1897,
+    longitude: -122.8490,
+    phone: '(604) 953-4950',
+  },
+  {
+    name: 'WELL Health Medical Centres - Cedar Hills',
+    orgId: 6778,
+    typeId: 37731,
+    slug: 'the-health-clinic-by-shoppers-9613',
+    city: 'Surrey',
+    address: '120-12852 96 Ave, Surrey, BC',
+    postalCode: 'V3V 6A8',
+    latitude: 49.1775,
+    longitude: -122.8425,
+    phone: '(604) 580-2333',
+  },
+  {
+    name: 'WELL Health Medical Centres - Evergreen',
+    orgId: 6780,
+    typeId: 37729,
+    slug: 'the-health-clinic-by-shoppers-9611',
+    city: 'Surrey',
+    address: '8960 152 Street, Surrey, BC',
+    postalCode: 'V3R 4E4',
+    latitude: 49.1642,
+    longitude: -122.8007,
+    phone: '(604) 930-8838',
+  },
+
+  // === BURNABY ===
+  {
+    name: 'PrimeCare Medical',
+    orgId: 5800,
+    typeId: 26902,
+    slug: 'primecare-medical',
+    city: 'Burnaby',
+    address: '202-7315 Edmonds Street, Burnaby, BC',
+    postalCode: 'V3N 1A7',
+    latitude: 49.2130,
+    longitude: -122.9588,
+    phone: '(604) 553-6113',
+  },
+
+  // === NEW WESTMINSTER ===
+  {
+    name: 'Care Point Medical New Westminster',
+    orgId: 4890,
+    typeId: 20661,
+    slug: 'care-point-medical-centre-new-westminster',
+    city: 'New Westminster',
+    address: '140 - 555 6th Street, New Westminster, BC',
+    postalCode: 'V3L 5H1',
+    latitude: 49.2076,
+    longitude: -122.9108,
+    phone: '(604) 553-4442',
+  },
+
+  // === LANGLEY ===
+  {
+    name: 'Walnut Grove Medical',
+    orgId: 5086,
+    typeId: 36345,
+    slug: 'walnut-grove-medical',
+    city: 'Langley',
+    address: '401-21183 88 Ave, Langley, BC',
+    postalCode: 'V1M 2G5',
+    latitude: 49.1642,
+    longitude: -122.6395,
+    phone: '(604) 888-6898',
+  },
+
+  // === ABBOTSFORD ===
+  {
+    name: 'Windermere Medical Clinic',
+    orgId: 2608,
+    typeId: 14921,
+    slug: 'windermere-medical-clinic-d834ea0d-27e8-4b86-b920-5320477f818e',
+    city: 'Abbotsford',
+    address: '#103 - 32450 Simon Ave, Abbotsford, BC',
+    postalCode: 'V2T 0H1',
+    latitude: 49.0504,
+    longitude: -122.3089,
+    phone: '(604) 853-5515',
+  },
+  {
+    name: 'Mahogany Medical',
+    orgId: 5755,
+    typeId: 23951,
+    slug: 'british-columbia-office-7ca2e12d-1b12-42a9-97f1-13e803043430',
+    city: 'Abbotsford',
+    address: '208 - 2180 Gladwin Rd, Abbotsford, BC',
+    postalCode: 'V2S 0H4',
+    latitude: 49.0490,
+    longitude: -122.3204,
+    phone: '(604) 852-1133',
+  },
+
+  // === VANCOUVER (more) ===
+  {
+    name: 'Ashton Medical',
+    orgId: 4521,
+    typeId: 50517,
+    slug: 'ashton-medical',
+    city: 'Vancouver',
+    address: '6963 Railway Ave, Vancouver, BC',
+    postalCode: 'V6A 3H4',
+    latitude: 49.2660,
+    longitude: -123.0872,
+    phone: '(604) 321-2555',
+  },
+  {
+    name: 'Kariba Health',
+    orgId: 5115,
+    typeId: 20061,
+    slug: 'kariba-health',
+    city: 'Vancouver',
+    address: '750 W. Broadway, Unit 1400, Vancouver, BC',
+    postalCode: 'V5Z 1H2',
+    latitude: 49.2636,
+    longitude: -123.1198,
+    phone: '(604) 243-4010',
+  },
+  {
+    name: 'Manna Clinic Vancouver',
+    orgId: 3041,
+    typeId: 11190,
+    slug: 'manna-vancouver',
+    city: 'Vancouver',
+    address: '470 S.W. Marine Drive, Vancouver, BC',
+    postalCode: 'V5X 0C4',
+    latitude: 49.2100,
+    longitude: -123.1090,
+  },
+]

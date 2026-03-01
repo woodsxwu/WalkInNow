@@ -1,9 +1,10 @@
 'use client'
 
+import { Suspense } from 'react'
 import { signIn } from 'next-auth/react'
 import { useSearchParams } from 'next/navigation'
 
-export default function AdminLogin() {
+function LoginForm() {
   const searchParams = useSearchParams()
   const error = searchParams.get('error')
 
@@ -21,8 +22,8 @@ export default function AdminLogin() {
 
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded">
-            {error === 'AccessDenied' 
-              ? 'Access denied. Your email is not authorized.' 
+            {error === 'AccessDenied'
+              ? 'Access denied. Your email is not authorized.'
               : 'An error occurred during sign in.'}
           </div>
         )}
@@ -57,5 +58,13 @@ export default function AdminLogin() {
         </p>
       </div>
     </div>
+  )
+}
+
+export default function AdminLogin() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-gray-50"><p>Loading...</p></div>}>
+      <LoginForm />
+    </Suspense>
   )
 }

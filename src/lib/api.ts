@@ -143,51 +143,63 @@ export async function fetchTimeSlots(clinicIds: string[]): Promise<TimeSlotRespo
 
 /**
  * Fetch all available slots for a clinic for multiple days (for calendar view)
+ * Supports multiple API URL templates (one per provider) to query all providers.
  * Returns slots separated by type (clinic, phone, video)
  */
 export async function fetchSlotsForDateRange(
-  apiUrlTemplate: string,
+  apiUrlTemplates: string | string[],
   startDate: Date,
   days: number = 7,
   dateFormat: string = 'YYYY-MM-DD'
 ): Promise<Map<string, SlotsByType>> {
   const slotsMap = new Map<string, SlotsByType>()
   const now = new Date()
-  
+  const templates = Array.isArray(apiUrlTemplates) ? apiUrlTemplates : [apiUrlTemplates]
+
   const promises = Array.from({ length: days }, async (_, i) => {
     const checkDate = new Date(startDate)
     checkDate.setDate(startDate.getDate() + i)
     const dateStr = formatDate(checkDate, dateFormat)
-    
+
     try {
-      const response = await fetchClinicSlots(apiUrlTemplate, checkDate, dateFormat)
-      const dayData = response[dateStr]
-      
-      if (dayData) {
-        // Filter future slots only for each type
-        const filterFutureSlots = (slots: CarefinitiSlot[]) => 
-          slots.filter(slot => {
-            const slotDateTime = new Date(slot.start_datetime)
-            return slotDateTime > now
-          })
-        
-        const clinicSlots = filterFutureSlots(dayData.clinic_slots)
-        const phoneSlots = filterFutureSlots(dayData.phone_slots)
-        const videoSlots = filterFutureSlots(dayData.video_slots)
-        
-        if (clinicSlots.length > 0 || phoneSlots.length > 0 || videoSlots.length > 0) {
-          slotsMap.set(dateStr, {
-            clinic: clinicSlots,
-            phone: phoneSlots,
-            video: videoSlots,
-          })
-        }
+      // Fetch all providers in parallel for this day
+      const results = await Promise.allSettled(
+        templates.map((tpl) => fetchClinicSlots(tpl, checkDate, dateFormat))
+      )
+
+      let allClinicSlots: CarefinitiSlot[] = []
+      let allPhoneSlots: CarefinitiSlot[] = []
+      let allVideoSlots: CarefinitiSlot[] = []
+
+      for (const result of results) {
+        if (result.status !== 'fulfilled') continue
+        const dayData = result.value[dateStr]
+        if (!dayData) continue
+        allClinicSlots.push(...dayData.clinic_slots)
+        allPhoneSlots.push(...dayData.phone_slots)
+        allVideoSlots.push(...dayData.video_slots)
+      }
+
+      // Filter future slots only for each type
+      const filterFutureSlots = (slots: CarefinitiSlot[]) =>
+        slots.filter(slot => new Date(slot.start_datetime) > now)
+
+      const clinicSlots = filterFutureSlots(allClinicSlots)
+      const phoneSlots = filterFutureSlots(allPhoneSlots)
+      const videoSlots = filterFutureSlots(allVideoSlots)
+
+      if (clinicSlots.length > 0 || phoneSlots.length > 0 || videoSlots.length > 0) {
+        slotsMap.set(dateStr, {
+          clinic: clinicSlots,
+          phone: phoneSlots,
+          video: videoSlots,
+        })
       }
     } catch (error) {
       console.error(`Error fetching slots for ${dateStr}:`, error)
     }
   })
-  
+
   await Promise.all(promises)
   return slotsMap
 }
