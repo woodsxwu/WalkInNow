@@ -3,28 +3,45 @@
 import { useEffect, useRef, useState } from 'react'
 import { Clinic } from '@/types/clinic'
 
+export interface MapBounds {
+  north: number
+  south: number
+  east: number
+  west: number
+}
+
 interface MapComponentProps {
   clinics: Clinic[]
   selectedClinic: Clinic | null
   onClinicSelect: (clinic: Clinic) => void
+  onBoundsChanged?: (bounds: MapBounds) => void
 }
 
 // Global flag to track if script is loading/loaded
 let isScriptLoading = false
 let isScriptLoaded = false
 
-export default function MapComponent({ 
-  clinics, 
+export default function MapComponent({
+  clinics,
   selectedClinic,
-  onClinicSelect 
+  onClinicSelect,
+  onBoundsChanged,
 }: MapComponentProps) {
   const mapRef = useRef<HTMLDivElement>(null)
   const googleMapRef = useRef<google.maps.Map | null>(null)
   const markersRef = useRef<google.maps.Marker[]>([])
   const userMarkerRef = useRef<google.maps.Marker | null>(null)
+  const onBoundsChangedRef = useRef(onBoundsChanged)
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null)
+  const [isRealLocation, setIsRealLocation] = useState<boolean | null>(null)
   const [mapLoaded, setMapLoaded] = useState(false)
+  const [mapReady, setMapReady] = useState(false)
   const [apiKeyError, setApiKeyError] = useState(false)
+
+  // Keep ref in sync
+  useEffect(() => {
+    onBoundsChangedRef.current = onBoundsChanged
+  }, [onBoundsChanged])
 
   // Load Google Maps script
   useEffect(() => {
@@ -107,68 +124,102 @@ export default function MapComponent({
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           })
+          setIsRealLocation(true)
         },
         (error) => {
           console.log('Location access denied or unavailable:', error)
-          // Default to Vancouver, BC if location is denied
           setUserLocation({ lat: 49.2827, lng: -123.1207 })
+          setIsRealLocation(false)
         }
       )
     } else {
-      // Default to Vancouver, BC
       setUserLocation({ lat: 49.2827, lng: -123.1207 })
+      setIsRealLocation(false)
     }
   }, [])
 
   // Initialize map
   useEffect(() => {
-    if (!mapLoaded || !mapRef.current || !userLocation || googleMapRef.current) return
+    if (!mapLoaded || !mapRef.current || !userLocation || isRealLocation === null || googleMapRef.current) return
 
     const google = (window as any).google
     if (!google) return
 
-    // Create map centered on user location or BC
-    const map = new google.maps.Map(mapRef.current, {
-      center: userLocation,
-      zoom: 11,
-      mapTypeControl: true,
-      streetViewControl: false,
-      fullscreenControl: true,
-    })
+    const mapOptions: google.maps.MapOptions = isRealLocation
+      ? {
+          center: userLocation,
+          zoom: 14,
+          mapTypeControl: true,
+          streetViewControl: false,
+          fullscreenControl: true,
+        }
+      : {
+          center: { lat: 49.235, lng: -122.91 },
+          mapTypeControl: true,
+          streetViewControl: false,
+          fullscreenControl: true,
+        }
 
+    const map = new google.maps.Map(mapRef.current, mapOptions)
     googleMapRef.current = map
+    setMapReady(true)
 
-    // Add user location marker
-    const userMarker = new google.maps.Marker({
-      position: userLocation,
-      map: map,
-      title: 'Your Location',
-      icon: {
-        path: google.maps.SymbolPath.CIRCLE,
-        scale: 10,
-        fillColor: '#4285F4',
-        fillOpacity: 1,
-        strokeColor: '#ffffff',
-        strokeWeight: 3,
-      },
-      zIndex: 1000,
+    // If fallback, fit to Metro Vancouver bounds
+    if (!isRealLocation) {
+      const metroVanBounds = new google.maps.LatLngBounds(
+        { lat: 49.10, lng: -123.27 },
+        { lat: 49.37, lng: -122.55 }
+      )
+      map.fitBounds(metroVanBounds)
+    }
+
+    // Add user location marker only if real location
+    if (isRealLocation) {
+      const userMarker = new google.maps.Marker({
+        position: userLocation,
+        map: map,
+        title: 'Your Location',
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 10,
+          fillColor: '#4285F4',
+          fillOpacity: 1,
+          strokeColor: '#ffffff',
+          strokeWeight: 3,
+        },
+        zIndex: 1000,
+      })
+
+      userMarkerRef.current = userMarker
+
+      const userInfoWindow = new google.maps.InfoWindow({
+        content: '<div style="padding: 8px;"><strong>Your Location</strong></div>',
+      })
+
+      userMarker.addListener('click', () => {
+        userInfoWindow.open(map, userMarker)
+      })
+    }
+
+    // Fire bounds changes on map idle (after pan/zoom settles)
+    map.addListener('idle', () => {
+      const bounds = map.getBounds()
+      if (bounds && onBoundsChangedRef.current) {
+        const ne = bounds.getNorthEast()
+        const sw = bounds.getSouthWest()
+        onBoundsChangedRef.current({
+          north: ne.lat(),
+          south: sw.lat(),
+          east: ne.lng(),
+          west: sw.lng(),
+        })
+      }
     })
-
-    userMarkerRef.current = userMarker
-
-    // Add info window for user location
-    const userInfoWindow = new google.maps.InfoWindow({
-      content: '<div style="padding: 8px;"><strong>Your Location</strong></div>',
-    })
-
-    userMarker.addListener('click', () => {
-      userInfoWindow.open(map, userMarker)
-    })
-  }, [mapLoaded, userLocation])
+  }, [mapLoaded, userLocation, isRealLocation])
 
   // Update clinic markers
   useEffect(() => {
-    if (!googleMapRef.current || !mapLoaded) return
+    if (!googleMapRef.current || !mapReady) return
 
     const google = (window as any).google
     if (!google) return
@@ -185,14 +236,6 @@ export default function MapComponent({
     // Clear existing markers
     markersRef.current.forEach((marker) => marker.setMap(null))
     markersRef.current = []
-
-    // Add markers for each clinic
-    const bounds = new google.maps.LatLngBounds()
-    
-    // Include user location in bounds
-    if (userLocation) {
-      bounds.extend(new google.maps.LatLng(userLocation.lat, userLocation.lng))
-    }
 
     let markersAdded = 0
     clinics.forEach((clinic) => {
@@ -270,24 +313,10 @@ export default function MapComponent({
       }
 
       markersRef.current.push(marker)
-      bounds.extend(position)
     })
 
     console.log(`Added ${markersAdded} markers out of ${clinics.length} clinics`)
-
-    // Fit map to show all markers
-    if (clinics.length > 0 && googleMapRef.current) {
-      googleMapRef.current.fitBounds(bounds)
-      
-      // Don't zoom in too much if there's only one clinic
-      google.maps.event.addListenerOnce(googleMapRef.current, 'bounds_changed', () => {
-        const zoom = googleMapRef.current?.getZoom()
-        if (zoom && zoom > 15) {
-          googleMapRef.current?.setZoom(15)
-        }
-      })
-    }
-  }, [clinics, selectedClinic, mapLoaded, userLocation, onClinicSelect])
+  }, [clinics, selectedClinic, mapReady, onClinicSelect])
 
   // Handle custom event from info window button
   useEffect(() => {

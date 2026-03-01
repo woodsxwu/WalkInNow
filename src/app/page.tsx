@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic'
 import { useState, useEffect } from 'react'
 import { Clinic } from '@/types/clinic'
+import type { MapBounds } from '@/components/MapComponent'
 // availability is now fetched server-side via /api/availability
 import CalendarView from '@/components/CalendarView'
 
@@ -40,6 +41,7 @@ export default function Home() {
   const [selectedClinic, setSelectedClinic] = useState<Clinic | null>(null)
   const [showCalendar, setShowCalendar] = useState(false)
   const [hoveredClinicId, setHoveredClinicId] = useState<string | null>(null)
+  const [mapBounds, setMapBounds] = useState<MapBounds | null>(null)
 
   useEffect(() => {
     loadClinics()
@@ -98,15 +100,32 @@ export default function Home() {
     setShowCalendar(true)
   }
 
-  // Sort clinics: Real walk-ins first, then by next available slot
+  // Sort clinics: Real walk-ins first, then by next available slot, then no-data last
   const sortedClinics = [...clinics].sort((a, b) => {
     if (a.isRealWalkIn && !b.isRealWalkIn) return -1
     if (!a.isRealWalkIn && b.isRealWalkIn) return 1
-    if (!a.isRealWalkIn && !b.isRealWalkIn && a.nextAvailableSlot && b.nextAvailableSlot) {
-      return new Date(a.nextAvailableSlot).getTime() - new Date(b.nextAvailableSlot).getTime()
+    if (!a.isRealWalkIn && !b.isRealWalkIn) {
+      if (a.nextAvailableSlot && b.nextAvailableSlot) {
+        return new Date(a.nextAvailableSlot).getTime() - new Date(b.nextAvailableSlot).getTime()
+      }
+      if (a.nextAvailableSlot && !b.nextAvailableSlot) return -1
+      if (!a.nextAvailableSlot && b.nextAvailableSlot) return 1
     }
     return 0
   })
+
+  // Filter to only clinics visible in the current map viewport
+  const visibleClinics = mapBounds
+    ? sortedClinics.filter((clinic) => {
+        if (!clinic.latitude || !clinic.longitude) return false
+        return (
+          clinic.latitude >= mapBounds.south &&
+          clinic.latitude <= mapBounds.north &&
+          clinic.longitude >= mapBounds.west &&
+          clinic.longitude <= mapBounds.east
+        )
+      })
+    : sortedClinics
 
   return (
     <div className="flex flex-col h-screen">
@@ -141,7 +160,7 @@ export default function Home() {
             {/* Clinic Rankings */}
             <div>
               <h2 className="text-sm font-bold mb-3 text-gray-700">
-                CLINICS ({clinics.length})
+                CLINICS ({visibleClinics.length} of {clinics.length})
               </h2>
               
               {loading ? (
@@ -150,7 +169,7 @@ export default function Home() {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  {sortedClinics.map((clinic, index) => (
+                  {visibleClinics.map((clinic, index) => (
                     <div
                       key={clinic.id}
                       onClick={() => setSelectedClinic(clinic)}
@@ -344,10 +363,11 @@ export default function Home() {
               <p>Loading clinics...</p>
             </div>
           ) : (
-            <MapComponent 
-              clinics={clinics} 
+            <MapComponent
+              clinics={clinics}
               onClinicSelect={setSelectedClinic}
               selectedClinic={selectedClinic}
+              onBoundsChanged={setMapBounds}
             />
           )}
         </div>
