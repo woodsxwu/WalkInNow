@@ -1,7 +1,7 @@
 {
-  "discoveredAt": "2026-03-01T01:49:26.219Z",
+  "discoveredAt": "2026-03-01T20:23:59.494Z",
   "dateUsed": "2026-03-02",
-  "totalProviders": 117,
+  "totalProviders": 176,
   "providers": [
     {
       "subdomain": "acemedical",
@@ -56,6 +56,60 @@
       "providerId": 42,
       "locationSlugs": [],
       "appointmentSlug": "first-available-walk-in"
+    },
+    {
+      "subdomain": "bearcreek",
+      "providerId": 2,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "bearcreek",
+      "providerId": 7,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "bearcreek",
+      "providerId": 16,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "belmont",
+      "providerId": 1,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "belmont",
+      "providerId": 6,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "belmont",
+      "providerId": 11,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "belmont",
+      "providerId": 18,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "belmont",
+      "providerId": 7,
+      "locationSlugs": [],
+      "appointmentSlug": "nurse-practitioner"
+    },
+    {
+      "subdomain": "belmont",
+      "providerId": 16,
+      "locationSlugs": [],
+      "appointmentSlug": "nurse-practitioner"
     },
     {
       "subdomain": "carefiniti",
@@ -285,6 +339,36 @@
       "providerId": 70,
       "locationSlugs": [],
       "appointmentSlug": "first-available-walk-in"
+    },
+    {
+      "subdomain": "foremed",
+      "providerId": 28,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "foremed",
+      "providerId": 35,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "foremed",
+      "providerId": 60,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "foremed",
+      "providerId": 82,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "generationsmedclinic",
+      "providerId": 16,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
     },
     {
       "subdomain": "healthwise",
@@ -553,6 +637,96 @@
       "appointmentSlug": "specific-doctor-walk-in"
     },
     {
+      "subdomain": "pulsemedical",
+      "providerId": 34,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "pulsemedical",
+      "providerId": 36,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "pulsemedical",
+      "providerId": 42,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "pulsemedical",
+      "providerId": 44,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "pulsemedical",
+      "providerId": 48,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "pulsemedical",
+      "providerId": 60,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "pulsemedical",
+      "providerId": 148,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "pulsemedical",
+      "providerId": 164,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "purecaremaple",
+      "providerId": 11,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "purecaremaple",
+      "providerId": 26,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "purecaremaple",
+      "providerId": 27,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "purecaremaple",
+      "providerId": 35,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "purecaremaple",
+      "providerId": 36,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "purecaremaple",
+      "providerId": 53,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "purecure",
+      "providerId": 16,
+      "locationSlugs": [],
+      "appointmentSlug": "first-available-walk-in"
+    },
+    {
       "subdomain": "reachcentre",
       "providerId": 49,
       "locationSlugs": [],
@@ -691,6 +865,24 @@
       "appointmentSlug": "specific-doctor-walk-in"
     },
     {
+      "subdomain": "trustcare",
+      "providerId": 5,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "trustcare",
+      "providerId": 14,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
+      "subdomain": "trustcare",
+      "providerId": 25,
+      "locationSlugs": [],
+      "appointmentSlug": "specific-doctor-walk-in"
+    },
+    {
       "subdomain": "welcomemedical",
       "providerId": 82,
       "locationSlugs": [],
@@ -719,6 +911,168 @@
       "providerId": 205,
       "locationSlugs": [],
       "appointmentSlug": "walkin"
+    },
+    {
+      "subdomain": "granvillemedical",
+      "providerId": 5,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "granvillemedical",
+      "providerId": 48,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "granvillemedical",
+      "providerId": 52,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "granvillemedical",
+      "providerId": 64,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "granvillemedical",
+      "providerId": 69,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "frasercare",
+      "providerId": 10,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "frasercare",
+      "providerId": 18,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "frasercare",
+      "providerId": 28,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "maywoodmedical",
+      "providerId": 2,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "maywoodmedical",
+      "providerId": 7,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "maywoodmedical",
+      "providerId": 13,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "maywoodmedical",
+      "providerId": 18,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "maywoodmedical",
+      "providerId": 19,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "maywoodmedical",
+      "providerId": 22,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "maywoodmedical",
+      "providerId": 24,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "maywoodmedical",
+      "providerId": 26,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "maywoodmedical",
+      "providerId": 30,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "focusmed",
+      "providerId": 13,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "focusmed",
+      "providerId": 20,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "elicarerichmond",
+      "providerId": 1,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "megafuclinic",
+      "providerId": 6,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "megafuclinic",
+      "providerId": 19,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "megafuclinic",
+      "providerId": 24,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "megafuclinic",
+      "providerId": 56,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "drsheikprimacy",
+      "providerId": 1,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "thrivemedical",
+      "providerId": 8,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
+    },
+    {
+      "subdomain": "thrivemedical",
+      "providerId": 30,
+      "locationSlugs": [],
+      "appointmentSlug": "family-doctor"
     }
   ]
 }

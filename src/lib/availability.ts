@@ -32,20 +32,65 @@ function buildCorticoUrls(config: CorticoApiConfig, dateStr: string): string[] {
 export async function fetchMedeoAvailability(
   orgId: number,
   typeId: number,
-  daysToCheck: number = 14
+  daysToCheck: number = 14,
+  practitionerIds?: number[]
 ): Promise<string | null> {
   const now = new Date()
   const from = now.toISOString()
   const to = new Date(now.getTime() + daysToCheck * 86400000).toISOString()
 
-  const url = `${MEDEO_BASE_URL}/v3/timeslots/org/${orgId}/available/list?from=${from}&to=${to}&type=${typeId}&count=1&page=1`
+  const baseParams = `from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&type=${typeId}&count=1&page=1`
 
+  // If practitionerIds provided, query in batches and return earliest slot
+  if (practitionerIds?.length) {
+    let earliest: string | null = null
+    let anySucceeded = false
+    const batchSize = 5
+
+    for (let i = 0; i < practitionerIds.length; i += batchSize) {
+      const batch = practitionerIds.slice(i, i + batchSize)
+      const results = await Promise.allSettled(
+        batch.map(async (pid) => {
+          const url = `${MEDEO_BASE_URL}/v3/timeslots/org/${orgId}/available/list?${baseParams}&practitioner=${pid}`
+          const response = await fetch(url, {
+            headers: { 'Ocp-Apim-Subscription-Key': MEDEO_API_KEY },
+            next: { revalidate: 300 },
+          })
+          if (!response.ok) throw new Error(`Medeo API error: ${response.status}`)
+          const data = await response.json()
+          return (data.items as MedeoTimeslot[]) || []
+        })
+      )
+
+      for (const result of results) {
+        if (result.status !== 'fulfilled') continue
+        anySucceeded = true
+        if (result.value.length > 0) {
+          const slot = result.value[0].starts_at
+          if (!earliest || new Date(slot) < new Date(earliest)) {
+            earliest = slot
+          }
+        }
+      }
+
+      // Return early if we found a slot — no need to check remaining practitioners
+      if (earliest) return earliest
+    }
+
+    if (!anySucceeded) throw new Error('All Medeo practitioner queries failed')
+    return earliest
+  }
+
+  // No practitionerIds — query without practitioner param
+  const url = `${MEDEO_BASE_URL}/v3/timeslots/org/${orgId}/available/list?${baseParams}`
   const response = await fetch(url, {
     headers: { 'Ocp-Apim-Subscription-Key': MEDEO_API_KEY },
     next: { revalidate: 300 },
   })
 
-  if (!response.ok) return null
+  if (!response.ok) {
+    throw new Error(`Medeo API error: ${response.status}`)
+  }
 
   const data = await response.json()
   const items: MedeoTimeslot[] = data.items || []
@@ -130,8 +175,8 @@ export async function fetchNextAvailableSlot(clinic: {
   apiConfig: any
 }): Promise<string | null> {
   if (clinic.apiProvider === 'medeo' && clinic.apiConfig) {
-    const config = clinic.apiConfig as { orgId: number; typeId: number }
-    return fetchMedeoAvailability(config.orgId, config.typeId)
+    const config = clinic.apiConfig as { orgId: number; typeId: number; practitionerIds?: number[] }
+    return fetchMedeoAvailability(config.orgId, config.typeId, 14, config.practitionerIds)
   } else if (clinic.apiProvider === 'ocean' && clinic.apiConfig) {
     return fetchOceanAvailability(clinic.apiConfig)
   } else if (clinic.apiProvider === 'inputhealth' && clinic.apiConfig) {
@@ -296,14 +341,26 @@ export async function refreshStaleClinicAvailability(
 
     const results = await Promise.allSettled(
       batch.map(async (clinic) => {
-        const nextSlot = await fetchNextAvailableSlot(clinic)
-        await prisma.clinic.update({
-          where: { id: clinic.id },
-          data: {
-            nextAvailableSlot: nextSlot ? new Date(nextSlot) : null,
-            availabilityLastFetchedAt: new Date(),
-          },
-        })
+        try {
+          const nextSlot = await fetchNextAvailableSlot(clinic)
+          await prisma.clinic.update({
+            where: { id: clinic.id },
+            data: {
+              nextAvailableSlot: nextSlot ? new Date(nextSlot) : null,
+              availabilityLastFetchedAt: new Date(),
+            },
+          })
+        } catch {
+          // API error (not "no slots") — preserve existing data,
+          // but still update fetch timestamp to avoid hammering broken APIs
+          await prisma.clinic.update({
+            where: { id: clinic.id },
+            data: {
+              availabilityLastFetchedAt: new Date(),
+            },
+          })
+          throw new Error('API error — preserved existing slot data')
+        }
       })
     )
 
