@@ -24,7 +24,7 @@ jobs:
             git pull origin main
 
             echo "==> Installing dependencies..."
-            npm ci --omit=dev
+            npm ci
 
             echo "==> Running database migrations..."
             npx prisma migrate deploy
